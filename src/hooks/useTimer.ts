@@ -19,6 +19,9 @@ export function useTimer() {
     }, [isRunning]);
 
     function start() {
+        if (secondsLeft === 0) {
+            setSecondsLeft(25 * 60);
+        }
         setIsRunning(true);
     }
 
