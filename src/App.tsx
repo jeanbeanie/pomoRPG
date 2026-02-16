@@ -4,7 +4,10 @@ import { useTimer } from './hooks/useTimer';
 import './App.css'
 
 function App() {
-    const [xp, setXp] = useState(0);
+    const [xp, setXp] = useState(() => {
+        const saved = localStorage.getItem('pomorpg_xp');
+        return saved ? Number(saved) : 0;
+    });
 
     const {
         isRunning,
@@ -20,6 +23,10 @@ function App() {
             setXp((prev) => prev + 10);
         }
     }, [secondsLeft]);
+
+    useEffect(() => {
+        localStorage.setItem('pomorpg_xp', xp.toString());
+    }, [xp]);
 
     return (
         <div>
