@@ -31,7 +31,7 @@ function App() {
     return (
         <div>
             <h1>PomoRPG</h1>
-            <h2>{formattedTime}</h2>
+            <h2 className="timer">{formattedTime}</h2>
 
             <button onClick={start} disabled={isRunning}>Start</button>
             <button onClick={pause} disabled={!isRunning }>Pause</button>
