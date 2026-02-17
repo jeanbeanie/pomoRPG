@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { useTimer } from './hooks/useTimer';
+import TimerDisplay from './components/TimerDisplay';
 import './App.css'
 
 function App() {
@@ -31,7 +32,7 @@ function App() {
     return (
         <div>
             <h1>PomoRPG</h1>
-            <h2 className="timer">{formattedTime}</h2>
+            <TimerDisplay time={formattedTime}/>
 
             <button onClick={start} disabled={isRunning}>Start</button>
             <button onClick={pause} disabled={!isRunning }>Pause</button>
