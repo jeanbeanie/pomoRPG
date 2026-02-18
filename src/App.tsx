@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { useTimer } from './hooks/useTimer';
 import TimerDisplay from './components/TimerDisplay';
+import TimerControls from './components/TimerControls';
 import './App.css'
 
 function App() {
@@ -33,10 +34,12 @@ function App() {
         <div>
             <h1>PomoRPG</h1>
             <TimerDisplay time={formattedTime}/>
-
-            <button onClick={start} disabled={isRunning}>Start</button>
-            <button onClick={pause} disabled={!isRunning }>Pause</button>
-            <button onClick={() => reset()}>Reset</button>
+            <TimerControls
+                isRunning={isRunning}
+                start={start}
+                pause={pause}
+                reset={reset}
+            />
 
             <h3>XP: {xp}</h3>
         </div>
