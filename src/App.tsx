@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useTimer } from './hooks/useTimer';
 import TimerDisplay from './components/TimerDisplay';
 import TimerControls from './components/TimerControls';
+import XpDisplay from './components/XpDisplay';
 import './App.css'
 
 function App() {
@@ -41,7 +42,7 @@ function App() {
                 reset={reset}
             />
 
-            <h3>XP: {xp}</h3>
+            <XpDisplay xp={xp} />
         </div>
     );
 }
