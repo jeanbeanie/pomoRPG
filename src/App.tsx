@@ -22,10 +22,10 @@ function App() {
     } = useTimer();
 
     useEffect(() => {
-        if (secondsLeft === 0) {
+        if (secondsLeft === 0 && !isRunning) {
             setXp((prev) => prev + 10);
         }
-    }, [secondsLeft]);
+    }, [secondsLeft, isRunning]);
 
     useEffect(() => {
         localStorage.setItem('pomorpg_xp', xp.toString());
