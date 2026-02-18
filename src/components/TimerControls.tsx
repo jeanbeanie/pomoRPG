@@ -1,3 +1,4 @@
+import Button from './Button';
 interface TimerControlsProps {
     isRunning: boolean;
     start: () => void;
@@ -8,9 +9,9 @@ interface TimerControlsProps {
 const TimerControls: React.FC<TimerControlsProps> = ({ isRunning, start, pause, reset }) => {
     return (
         <div className="timerControls">
-            <button onClick={start} disabled={isRunning}>Start</button>
-            <button onClick={pause} disabled={!isRunning}>Pause</button>
-            <button onClick={() => reset()}>Reset</button>
+            <Button onClick={start} disabled={isRunning}>Start</Button>
+            <Button onClick={pause} disabled={!isRunning}>Pause</Button>
+            <Button onClick={reset}>Reset</Button>
         </div>
     );
 };

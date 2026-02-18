@@ -17,10 +17,18 @@ div {
     align-items: center;
 }
 
-button {
-    margin: 0 5px;
+.btn {
+    margin: 6px;
     padding: 8px 16px;
     font-size: 1rem;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+}
+
+.btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
 }
 
 .timer {
