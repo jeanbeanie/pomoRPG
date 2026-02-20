@@ -4,6 +4,7 @@ import { useTimer } from './hooks/useTimer';
 import TimerDisplay from './components/TimerDisplay';
 import TimerControls from './components/TimerControls';
 import XpDisplay from './components/XpDisplay';
+import XpBar from './components/XpBar';
 import './App.css'
 
 function App() {
@@ -43,6 +44,7 @@ function App() {
             />
 
             <XpDisplay xp={xp} />
+            <XpBar xp={xp} />
         </div>
     );
 }
