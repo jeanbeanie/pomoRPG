@@ -5,6 +5,7 @@ import TimerDisplay from './components/TimerDisplay';
 import TimerControls from './components/TimerControls';
 import XpDisplay from './components/XpDisplay';
 import XpBar from './components/XpBar';
+import SkillTree from './components/SkillTree';
 import './App.css'
 
 function App() {
@@ -45,6 +46,7 @@ function App() {
 
             <XpDisplay xp={xp} />
             <XpBar xp={xp} />
+            <SkillTree xp={xp} />
         </div>
     );
 }

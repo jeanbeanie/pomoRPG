@@ -36,6 +36,8 @@ div {
     margin: 20px 0;
 }
 
+/*XP BAR*/
+
 .xp-bar-container {
     width: 300px;
     height: 20px;
@@ -50,3 +52,25 @@ div {
     background-color: limegreen;
     transition: width 0.3s ease;
 }
+
+/*SKILL TREE*/
+
+.skill-tree {
+    margin-top: 20px;
+}
+
+.skill {
+    border: 1px solid #ccc;
+    padding: 8px;
+    margin: 8px auto;
+    width: 200px;
+    border-radius: 6px;
+}
+
+    .skill.locked {
+        opacity: 0.4;
+    }
+
+    .skill.unlocked {
+        border-color: limegreen;
+    }
