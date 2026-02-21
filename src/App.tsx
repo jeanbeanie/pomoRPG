@@ -23,6 +23,8 @@ function App() {
         formattedTime
     } = useTimer();
 
+    const level = Math.floor(xp / 100);
+
     useEffect(() => {
         if (secondsLeft === 0 && !isRunning) {
             setXp((prev) => prev + 10);
@@ -45,6 +47,7 @@ function App() {
             />
 
             <XpDisplay xp={xp} />
+            <h2>Level: {level}</h2>
             <XpBar xp={xp} />
             <SkillTree xp={xp} />
         </div>
