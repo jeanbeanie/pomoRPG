@@ -45,6 +45,7 @@ div {
     margin: 10px auto;
     border-radius: 10px;
     overflow: hidden;
+    position: relative;
 }
 
 .xp-bar-fill-area {
@@ -58,14 +59,14 @@ div {
     /* must match container width and height */
     width: 300px;
     height: 25px;
-    top: 222px;
-    left: 287px;
+    top: 50%;
+    left: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 0.8rem;
     font-weight: bold;
-    transform: translate(50%, 50%);
+    transform: translate(-50%, -50%);
 }
 
 /*SKILL TREE*/
