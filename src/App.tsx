@@ -6,6 +6,8 @@ import TimerControls from './components/TimerControls';
 import XpDisplay from './components/XpDisplay';
 import XpBar from './components/XpBar';
 import SkillTree from './components/SkillTree';
+import { skills } from './data/skills';
+import { getXpReward } from './game/gameLogic';
 import './App.css'
 
 function App() {
@@ -25,9 +27,20 @@ function App() {
 
     const level = Math.floor(xp / 100);
 
+    const unlockedSkills = skills
+        .filter(skill => xp >= skill.xpRequired)
+        .map(skill => skill.id);
+
     useEffect(() => {
         if (secondsLeft === 0 && !isRunning) {
-            setXp((prev) => prev + 10);
+            const reward = getXpReward(unlockedSkills);
+            console.log(`Pomodoro complete! Gained ${reward} XP.`);
+            setXp((prev) => prev + reward);
+            // 5 minute break after each pomodoro
+            //setTimeout(() => {
+            //    start(5 * 60);
+            //}, 5 * 60 * 1000);
+            // longer break every 4 pomodoros
         }
     }, [secondsLeft, isRunning]);
 
