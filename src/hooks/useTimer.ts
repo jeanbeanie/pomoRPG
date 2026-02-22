@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 export function useTimer() {
     const [secondsLeft, setSecondsLeft] = useState(25 * 60); // 25 minutes
     const [isRunning, setIsRunning] = useState(false);
+    const pomodoroDuration = 25 * 60; // 25 minutes in seconds
 
     useEffect(() => {
         if (!isRunning) return;
@@ -18,9 +19,9 @@ export function useTimer() {
         return () => clearInterval(interval);
     }, [isRunning]);
 
-    function start() {
+    function start(secs=pomodoroDuration) {
         if (secondsLeft === 0) {
-            setSecondsLeft(25 * 60);
+            setSecondsLeft(secs);
         }
         setIsRunning(true);
     }
