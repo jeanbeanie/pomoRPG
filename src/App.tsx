@@ -11,6 +11,7 @@ import { getXpReward } from './game/gameLogic';
 import './App.css'
 
 function App() {
+    const [mode, setMode] = useState<'focus' | 'break'>('focus');
     const [xp, setXp] = useState(() => {
         const saved = localStorage.getItem('pomorpg_xp');
         return saved ? Number(saved) : 0;
@@ -37,12 +38,13 @@ function App() {
             console.log(`Pomodoro complete! Gained ${reward} XP.`);
             setXp((prev) => prev + reward);
             // 5 minute break after each pomodoro
+            setMode('break');
             //setTimeout(() => {
             //    start(5 * 60);
             //}, 5 * 60 * 1000);
             // longer break every 4 pomodoros
         }
-    }, [secondsLeft, isRunning]);
+    }, [secondsLeft, isRunning, mode, unlockedSkills]);
 
     useEffect(() => {
         localStorage.setItem('pomorpg_xp', xp.toString());
@@ -54,7 +56,7 @@ function App() {
             <TimerDisplay time={formattedTime}/>
             <TimerControls
                 isRunning={isRunning}
-                start={start}
+                start={() => { setMode('focus'); start() }}
                 pause={pause}
                 reset={reset}
             />
