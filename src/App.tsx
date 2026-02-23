@@ -8,6 +8,7 @@ import XpBar from './components/XpBar';
 import SkillTree from './components/SkillTree';
 import { skills } from './data/skills';
 import { getXpReward } from './game/gameLogic';
+import { createNewCharacter, type Character } from './game/character';
 import './App.css'
 
 function App() {
@@ -15,6 +16,10 @@ function App() {
     const [xp, setXp] = useState(() => {
         const saved = localStorage.getItem('pomorpg_xp');
         return saved ? Number(saved) : 0;
+    });
+    const [character, setCharacter] = useState<Character>(() => {
+        const saved = localStorage.getItem('pomorpg_character');
+        return saved ? JSON.parse(saved) : createNewCharacter();
     });
 
     const {
@@ -31,6 +36,10 @@ function App() {
     const unlockedSkills = skills
         .filter(skill => xp >= skill.xpRequired)
         .map(skill => skill.id);
+
+    useEffect(() => {
+        localStorage.setItem('pomorpg_character', JSON.stringify(character));
+    }, [character]);
 
     useEffect(() => {
         if (secondsLeft === 0 && !isRunning) {
