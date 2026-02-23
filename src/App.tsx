@@ -9,9 +9,11 @@ import SkillTree from './components/SkillTree';
 import { skills } from './data/skills';
 import { getXpReward } from './game/gameLogic';
 import { createNewCharacter, type Character } from './game/character';
+import { type runResults, simulateRun } from './game/simulateRun';
 import './App.css'
 
 function App() {
+    const POMODORO_DURATION = 25 * 60; // 25 minutes in seconds
     const [mode, setMode] = useState<'focus' | 'break'>('focus');
     const [xp, setXp] = useState(() => {
         const saved = localStorage.getItem('pomorpg_xp');
@@ -21,6 +23,7 @@ function App() {
         const saved = localStorage.getItem('pomorpg_character');
         return saved ? JSON.parse(saved) : createNewCharacter();
     });
+    const [lastRunSummary, setLastRunSummary] = useState<runResults | null>(null);
 
     const {
         isRunning,
@@ -29,7 +32,7 @@ function App() {
         pause,
         reset,
         formattedTime
-    } = useTimer();
+    } = useTimer(POMODORO_DURATION);
 
     const level = Math.floor(xp / 100);
 
@@ -42,10 +45,14 @@ function App() {
     }, [character]);
 
     useEffect(() => {
-        if (secondsLeft === 0 && !isRunning) {
+        if (secondsLeft === 0 && !isRunning && mode === 'focus') {
             const reward = getXpReward(unlockedSkills);
             console.log(`Pomodoro complete! Gained ${reward} XP.`);
             setXp((prev) => prev + reward);
+
+            const run = simulateRun(25 * 60, character);
+            setLastRunSummary(run);
+            console.log(`Run summary: ${run.enemiesDefeated} enemies defeated, ${run.goldEarned} gold earned, ${run.characterXpEarned} XP earned.`);
             // 5 minute break after each pomodoro
             setMode('break');
             //setTimeout(() => {
@@ -53,7 +60,7 @@ function App() {
             //}, 5 * 60 * 1000);
             // longer break every 4 pomodoros
         }
-    }, [secondsLeft, isRunning, mode, unlockedSkills]);
+    }, [secondsLeft, isRunning, mode]);
 
     useEffect(() => {
         localStorage.setItem('pomorpg_xp', xp.toString());
@@ -67,7 +74,7 @@ function App() {
                 isRunning={isRunning}
                 start={() => { setMode('focus'); start() }}
                 pause={pause}
-                reset={reset}
+                reset={() => { setMode('focus'); reset() }}
             />
 
             <XpDisplay xp={xp} />
