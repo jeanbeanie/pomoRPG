@@ -50,7 +50,7 @@ function App() {
             console.log(`Pomodoro complete! Gained ${reward} XP.`);
             setXp((prev) => prev + reward);
 
-            const run = simulateRun(25 * 60, character);
+            const run = simulateRun(POMODORO_DURATION, character);
             setLastRunSummary(run);
             console.log(`Run summary: ${run.enemiesDefeated} enemies defeated, ${run.goldEarned} gold earned, ${run.characterXpEarned} XP earned.`);
             // 5 minute break after each pomodoro
