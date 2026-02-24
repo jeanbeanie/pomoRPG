@@ -10,10 +10,11 @@ import { skills } from './data/skills';
 import { getXpReward } from './game/gameLogic';
 import { createNewCharacter, type Character } from './game/character';
 import { type runResults, simulateRun } from './game/simulateRun';
+import BreakSummary from './components/BreakSummary';
 import './App.css'
 
 function App() {
-    const POMODORO_DURATION = 25 * 60; // 25 minutes in seconds
+    const POMODORO_DURATION = 1 * 60; // 25 minutes in seconds
     const [mode, setMode] = useState<'focus' | 'break'>('focus');
     const [xp, setXp] = useState(() => {
         const saved = localStorage.getItem('pomorpg_xp');
@@ -66,7 +67,26 @@ function App() {
         localStorage.setItem('pomorpg_xp', xp.toString());
     }, [xp]);
 
+    const shouldShowBreakSummary = mode === 'break' && lastRunSummary !== null;
+
+    const handleContinue = () => {
+        const xpEarned = lastRunSummary?.characterXpEarned || 0;
+        setCharacter((prev) => ({ ...prev, xp: prev.xp + xpEarned }));
+        setLastRunSummary(null);
+        setMode('focus');
+        reset();
+        console.log('state after break summary continue:', { character, lastRunSummary, mode });
+    };
+
     return (
+        shouldShowBreakSummary ? (
+            <BreakSummary
+                enemiesDefeated={lastRunSummary?.enemiesDefeated}
+                goldEarned={lastRunSummary?.goldEarned}
+                characterXpEarned={lastRunSummary?.characterXpEarned}
+                callback={handleContinue}
+                />
+        ) : (
         <div>
             <h1>PomoRPG</h1>
             <TimerDisplay time={formattedTime}/>
@@ -82,6 +102,7 @@ function App() {
             <XpBar xp={xp} />
             <SkillTree xp={xp} />
         </div>
+        )
     );
 }
 
