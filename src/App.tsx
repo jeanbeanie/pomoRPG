@@ -8,7 +8,7 @@ import XpBar from './components/XpBar';
 import SkillTree from './components/SkillTree';
 import { skills } from './data/skills';
 import { getXpReward } from './game/gameLogic';
-import { createNewCharacter, type Character } from './game/character';
+import { applyCharacterXp, createNewCharacter, type Character } from './game/character';
 import { type runResults, simulateRun } from './game/simulateRun';
 import BreakSummary from './components/BreakSummary';
 import './App.css'
@@ -71,7 +71,7 @@ function App() {
 
     const handleContinue = () => {
         const xpEarned = lastRunSummary?.characterXpEarned || 0;
-        setCharacter((prev) => ({ ...prev, xp: prev.xp + xpEarned }));
+        setCharacter(prev => applyCharacterXp(prev, xpEarned));
         setLastRunSummary(null);
         setMode('focus');
         reset();
