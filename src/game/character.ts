@@ -11,3 +11,23 @@ export const createNewCharacter = (): Character => ({
     attack: 1,
     speed: 1,
 });
+
+export function applyCharacterXp(character: Character, xpEarned: number): Character {
+    let newXp = character.xp + xpEarned;
+    let newLevel = character.level;
+
+    const XP_PER_LEVEL = 50;
+
+    while (newXp >= XP_PER_LEVEL) {
+        newXp -= XP_PER_LEVEL;
+        newLevel += 1;
+    }
+
+    return {
+        ...character,
+        level: newLevel,
+        xp: newXp,
+        attack: 1 + Math.floor(newLevel / 3), // Attack increases every 3 levels
+        speed: 1 + Math.floor(newLevel / 5), // Speed increases every 5 levels
+    };
+}
