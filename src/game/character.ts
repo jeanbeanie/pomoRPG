@@ -27,7 +27,5 @@ export function applyCharacterXp(character: Character, xpEarned: number): Charac
         ...character,
         level: newLevel,
         xp: newXp,
-        attack: 1 + Math.floor(newLevel / 3), // Attack increases every 3 levels
-        speed: 1 + Math.floor(newLevel / 5), // Speed increases every 5 levels
     };
 }

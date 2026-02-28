@@ -15,6 +15,8 @@ import './App.css'
 
 function App() {
     const POMODORO_DURATION = 1 * 60; // 25 minutes in seconds
+
+    // state
     const [mode, setMode] = useState<'focus' | 'break'>('focus');
     const [xp, setXp] = useState(() => {
         const saved = localStorage.getItem('pomorpg_xp');
@@ -26,6 +28,7 @@ function App() {
     });
     const [lastRunSummary, setLastRunSummary] = useState<runResults | null>(null);
 
+    // timer hook
     const {
         isRunning,
         secondsLeft,
@@ -35,16 +38,23 @@ function App() {
         formattedTime
     } = useTimer(POMODORO_DURATION);
 
+    // player level and unlocked skills
     const level = Math.floor(xp / 100);
 
     const unlockedSkills = skills
         .filter(skill => xp >= skill.xpRequired)
         .map(skill => skill.id);
 
+     // persist character and xp to localStorage whenever they change
     useEffect(() => {
         localStorage.setItem('pomorpg_character', JSON.stringify(character));
     }, [character]);
 
+    useEffect(() => {
+        localStorage.setItem('pomorpg_xp', xp.toString());
+    }, [xp]);
+
+    // when a pomodoro completes, calculate rewards and start break
     useEffect(() => {
         if (secondsLeft === 0 && !isRunning && mode === 'focus') {
             const reward = getXpReward(unlockedSkills);
@@ -63,9 +73,7 @@ function App() {
         }
     }, [secondsLeft, isRunning, mode]);
 
-    useEffect(() => {
-        localStorage.setItem('pomorpg_xp', xp.toString());
-    }, [xp]);
+    // display logic
 
     const shouldShowBreakSummary = mode === 'break' && lastRunSummary !== null;
 
