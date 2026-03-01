@@ -71,7 +71,7 @@ function App() {
             //}, 5 * 60 * 1000);
             // longer break every 4 pomodoros
         }
-    }, [secondsLeft, isRunning, mode]);
+    }, [secondsLeft, isRunning, mode, POMODORO_DURATION, character, unlockedSkills]);
 
     // display logic
 
