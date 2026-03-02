@@ -11,6 +11,7 @@ div {
 #root {
     display: flex;
     height: 100vh;
+    min-height: fit-content;
     /* center content vertically */
     justify-content: center;
     /* center content horizontally */
