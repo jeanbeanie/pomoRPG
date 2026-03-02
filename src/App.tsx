@@ -64,6 +64,7 @@ function App() {
             const run = simulateRun(POMODORO_DURATION, character);
             setLastRunSummary(run);
             console.log(`Run summary: ${run.enemiesDefeated} enemies defeated, ${run.goldEarned} gold earned, ${run.characterXpEarned} XP earned.`);
+
             // 5 minute break after each pomodoro
             setMode('break');
             //setTimeout(() => {
@@ -83,7 +84,6 @@ function App() {
         setLastRunSummary(null);
         setMode('focus');
         reset();
-        console.log('state after break summary continue:', { character, lastRunSummary, mode });
     };
 
     return (
