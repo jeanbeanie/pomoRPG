@@ -29,6 +29,7 @@ function App() {
     });
     const [lastRunSummary, setLastRunSummary] = useState<runResults | null>(null);
     const [upgradeOptions, setUpgradeOptions] = useState<UpgradeOption[]>([]);
+    const [selectedOption, setSelectedOption] = useState<UpgradeOption | null>(null);
 
     // timer hook
     const {
@@ -82,12 +83,42 @@ function App() {
     const shouldShowBreakSummary = mode === 'break' && lastRunSummary !== null;
 
     const handleContinue = () => {
+        applyUpgrade(selectedOption!);
         const xpEarned = lastRunSummary?.characterXpEarned || 0;
         setCharacter(prev => applyCharacterXp(prev, xpEarned));
         setLastRunSummary(null);
         setMode('focus');
         reset();
     };
+
+    const handleUpgradeSelect = (option: UpgradeOption) => {
+        // highlight selected option in UI
+        document.querySelectorAll('#breakSummary button').forEach((btn) => {
+            if (btn.textContent === option.type) {
+                btn.classList.add('selected');
+            }
+            else {
+                btn.classList.remove('selected');
+            }
+        });
+
+        setSelectedOption(option);
+    }
+
+    function applyUpgrade(option: UpgradeOption) {
+        if (option.type === 'attack') {
+            setCharacter(prev => ({ ...prev, attack: prev.attack + option.value }));
+        }
+
+        if (option.type === 'speed') {
+            setCharacter(prev => ({ ...prev, speed: prev.speed + option.value }));
+        }
+
+        if (option.type === 'accountXpBoost') {
+            // Add to account XP multiplier state later  
+        }
+    }
+
 
     return (
         shouldShowBreakSummary ? (
@@ -96,6 +127,8 @@ function App() {
                 goldEarned={lastRunSummary?.goldEarned}
                 characterXpEarned={lastRunSummary?.characterXpEarned}
                 callback={handleContinue}
+                upgradeOptions={upgradeOptions}
+                onUpgradeSelect={ handleUpgradeSelect}
                 />
         ) : (
         <div>
