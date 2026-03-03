@@ -11,6 +11,7 @@ import { getXpReward } from './game/gameLogic';
 import { applyCharacterXp, createNewCharacter, type Character } from './game/character';
 import { type runResults, simulateRun } from './game/simulateRun';
 import BreakSummary from './components/BreakSummary';
+import { generateUpgradeOptions, type UpgradeOption } from './game/upgrades';
 import './App.css'
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
         return saved ? JSON.parse(saved) : createNewCharacter();
     });
     const [lastRunSummary, setLastRunSummary] = useState<runResults | null>(null);
+    const [upgradeOptions, setUpgradeOptions] = useState<UpgradeOption[]>([]);
 
     // timer hook
     const {
@@ -63,6 +65,7 @@ function App() {
 
             const run = simulateRun(POMODORO_DURATION, character);
             setLastRunSummary(run);
+            setUpgradeOptions(generateUpgradeOptions());
             console.log(`Run summary: ${run.enemiesDefeated} enemies defeated, ${run.goldEarned} gold earned, ${run.characterXpEarned} XP earned.`);
 
             // 5 minute break after each pomodoro
