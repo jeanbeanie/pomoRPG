@@ -1,7 +1,11 @@
+import { type UpgradeOption } from '../game/upgrades';
+
 interface BreakSummaryProps {
     enemiesDefeated?: number;
     goldEarned?: number;
     characterXpEarned?: number;
+    upgradeOptions: UpgradeOption[];
+    onUpgradeSelected: (option: UpgradeOption) => void;
     callback: () => void;
 }
 
