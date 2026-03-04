@@ -1,23 +1,28 @@
+/* Main application component for PomoRPG - a gamified Pomodoro timer with RPG elements. */
+
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import { useTimer } from './hooks/useTimer';
+/* UI component imports */
 import TimerDisplay from './components/TimerDisplay';
 import TimerControls from './components/TimerControls';
 import XpDisplay from './components/XpDisplay';
 import XpBar from './components/XpBar';
 import SkillTree from './components/SkillTree';
+import BreakSummary from './components/BreakSummary';
+/* Game logic imports */
+import { useTimer } from './hooks/useTimer';
 import { skills } from './data/skills';
 import { getXpReward } from './game/gameLogic';
 import { applyCharacterXp, createNewCharacter, type Character } from './game/character';
 import { type runResults, simulateRun } from './game/simulateRun';
-import BreakSummary from './components/BreakSummary';
 import { generateUpgradeOptions, type UpgradeOption } from './game/upgrades';
+/* Styles */
 import './App.css'
 
 function App() {
     const POMODORO_DURATION = 1 * 60; // 25 minutes in seconds
 
-    // state
+    /* STATE */
     const [mode, setMode] = useState<'focus' | 'break'>('focus');
     const [xp, setXp] = useState(() => {
         const saved = localStorage.getItem('pomorpg_xp');
@@ -31,7 +36,7 @@ function App() {
     const [upgradeOptions, setUpgradeOptions] = useState<UpgradeOption[]>([]);
     const [selectedOption, setSelectedOption] = useState<UpgradeOption | null>(null);
 
-    // timer hook
+    /* TIMER HOOK */
     const {
         isRunning,
         secondsLeft,
@@ -69,7 +74,7 @@ function App() {
             setUpgradeOptions(generateUpgradeOptions());
             console.log(`Run summary: ${run.enemiesDefeated} enemies defeated, ${run.goldEarned} gold earned, ${run.characterXpEarned} XP earned.`);
 
-            // 5 minute break after each pomodoro
+            // TODO 5 minute break after each pomodoro
             setMode('break');
             //setTimeout(() => {
             //    start(5 * 60);
@@ -78,7 +83,7 @@ function App() {
         }
     }, [secondsLeft, isRunning, mode, POMODORO_DURATION, character, unlockedSkills]);
 
-    // display logic
+    /* DISPLAY LOGIC */
 
     const shouldShowBreakSummary = mode === 'break' && lastRunSummary !== null;
 
@@ -119,6 +124,7 @@ function App() {
         }
     }
 
+    /* RENDER */
 
     return (
         shouldShowBreakSummary ? (
