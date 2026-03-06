@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-export function useTimer(duration) {
+export function useTimer(duration:number) {
     const [secondsLeft, setSecondsLeft] = useState(duration); // 25 minutes
     const [isRunning, setIsRunning] = useState(false);
 
