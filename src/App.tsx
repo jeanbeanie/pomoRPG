@@ -127,16 +127,19 @@ function App() {
 
     /* RENDER */
 
-   // return (
+    // return (
+   // todo - cleanup conditional rendering logic, make page components
         if (mode === "home") {
             return (
                 <div>
                     <h1>PomoRPG</h1>
-                    <Button onClick={() => setMode('focus')}>Start Focus Session</Button>
+                    <p>The adventurer is itchin' to explore...</p>
+                    <Button onClick={() => { setMode('focus'); start(); } }>Start Focus Session</Button>
                     <div>
                         <h3>Character: Level {character.level}</h3>
                         <p>Attack: {character.attack}</p>
                         <p>Speed: {character.speed}</p>
+                        
                     </div>
                 </div>
             );
@@ -159,12 +162,15 @@ function App() {
                     start={() => { setMode('focus'); start() }}
                     pause={pause}
                     reset={() => { setMode('focus'); reset() }}
-                />
-                
+                    />
+                <p>The adventurer ventures into the woods...</p>
+                    {/* TODO - move these components
                 <XpDisplay xp={xp} />
                 <h4>Level: {level}</h4>
                 <XpBar xp={xp} />
-                <SkillTree xp={xp} />
+                    <SkillTree xp={xp} />
+                    */}
+                
             </div>
         )
     }
