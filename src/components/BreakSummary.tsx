@@ -5,20 +5,22 @@ interface BreakSummaryProps {
     enemiesDefeated?: number;
     goldEarned?: number;
     characterXpEarned?: number;
+    xpEarned?: number;
     upgradeOptions: UpgradeOption[];
     onUpgradeSelect: (option: UpgradeOption) => void;
     callback: () => void;
 }
 // todo - add flavor text prop
 
-const BreakSummary: React.FC<BreakSummaryProps> = ({ enemiesDefeated=0, goldEarned=0, characterXpEarned=0, callback, upgradeOptions, onUpgradeSelect }) => {
+const BreakSummary: React.FC<BreakSummaryProps> = ({ enemiesDefeated=0, goldEarned=0, xpEarned=0, characterXpEarned=0, callback, upgradeOptions, onUpgradeSelect }) => {
     return (
         <div id="breakSummary">
-            <h2>Break Time Summary</h2>
-            <p>The adventurer finished exploring the woods.</p>
+            <h2>Focus Session Complete!</h2>
+            <b>The adventurer successfully explored the woods.</b>
             <p>Enemies Defeated: {enemiesDefeated}</p>
             <p>Gold Earned: {goldEarned}</p>
-            <p>XP Earned: {characterXpEarned}</p>
+            <p>Character XP Earned: {characterXpEarned}</p>
+            <p>You've gained { xpEarned } XP!</p>
             <h4>Choose an Upgrade:</h4>
             {
                 upgradeOptions.map((option, index) => (

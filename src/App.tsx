@@ -129,26 +129,27 @@ function App() {
 
     // return (
    // todo - cleanup conditional rendering logic, make page components
-        if (mode === "home") {
-            return (
+    if (mode === "home") {
+        return (
+            <div>
+                <h1>PomoRPG</h1>
+                <p>The adventurer is itchin' to explore...</p>
+                <Button onClick={() => { setMode('focus'); start(); }}>Start Focus Session</Button>
                 <div>
-                    <h1>PomoRPG</h1>
-                    <p>The adventurer is itchin' to explore...</p>
-                    <Button onClick={() => { setMode('focus'); start(); } }>Start Focus Session</Button>
-                    <div>
-                        <h3>Character: Level {character.level}</h3>
-                        <p>Attack: {character.attack}</p>
-                        <p>Speed: {character.speed}</p>
-                        
-                    </div>
+                    <h3>Character: Level {character.level}</h3>
+                    <p>Attack: {character.attack}</p>
+                    <p>Speed: {character.speed}</p>
+
                 </div>
-            );
+            </div>
+        );
     } else {
         return shouldShowBreakSummary ? (
             <BreakSummary
                 enemiesDefeated={lastRunSummary?.enemiesDefeated}
                 goldEarned={lastRunSummary?.goldEarned}
                 characterXpEarned={lastRunSummary?.characterXpEarned}
+                xpEarned={ getXpReward(unlockedSkills)}
                 callback={handleContinue}
                 upgradeOptions={upgradeOptions}
                 onUpgradeSelect={handleUpgradeSelect}
