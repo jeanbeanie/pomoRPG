@@ -18,12 +18,13 @@ import { type runResults, simulateRun } from './game/simulateRun';
 import { generateUpgradeOptions, type UpgradeOption } from './game/upgrades';
 /* Styles */
 import './App.css'
+import Button from './components/Button';
 
 function App() {
     const POMODORO_DURATION = 1 * 60; // 25 minutes in seconds
 
     /* STATE */
-    const [mode, setMode] = useState<'focus' | 'break'>('focus');
+    const [mode, setMode] = useState<'home' | 'focus' | 'break'>('home');
     const [xp, setXp] = useState(() => {
         const saved = localStorage.getItem('pomorpg_xp');
         return saved ? Number(saved) : 0;
@@ -126,34 +127,48 @@ function App() {
 
     /* RENDER */
 
-    return (
-        shouldShowBreakSummary ? (
+   // return (
+        if (mode === "home") {
+            return (
+                <div>
+                    <h1>PomoRPG</h1>
+                    <Button onClick={() => setMode('focus')}>Start Focus Session</Button>
+                    <div>
+                        <h3>Character: Level {character.level}</h3>
+                        <p>Attack: {character.attack}</p>
+                        <p>Speed: {character.speed}</p>
+                    </div>
+                </div>
+            );
+    } else {
+        return shouldShowBreakSummary ? (
             <BreakSummary
                 enemiesDefeated={lastRunSummary?.enemiesDefeated}
                 goldEarned={lastRunSummary?.goldEarned}
                 characterXpEarned={lastRunSummary?.characterXpEarned}
                 callback={handleContinue}
                 upgradeOptions={upgradeOptions}
-                onUpgradeSelect={ handleUpgradeSelect}
-                />
-        ) : (
-        <div>
-            <h1>PomoRPG</h1>
-            <TimerDisplay time={formattedTime}/>
-            <TimerControls
-                isRunning={isRunning}
-                start={() => { setMode('focus'); start() }}
-                pause={pause}
-                reset={() => { setMode('focus'); reset() }}
+                onUpgradeSelect={handleUpgradeSelect}
             />
-
-            <XpDisplay xp={xp} />
-            <h2>Level: {level}</h2>
-            <XpBar xp={xp} />
-            <SkillTree xp={xp} />
-        </div>
+        ) : (
+            <div>
+                <h1>PomoRPG</h1>
+                <TimerDisplay time={formattedTime} />
+                <TimerControls
+                    isRunning={isRunning}
+                    start={() => { setMode('focus'); start() }}
+                    pause={pause}
+                    reset={() => { setMode('focus'); reset() }}
+                />
+                
+                <XpDisplay xp={xp} />
+                <h4>Level: {level}</h4>
+                <XpBar xp={xp} />
+                <SkillTree xp={xp} />
+            </div>
         )
-    );
+    }
+   // );
 }
 
 export default App;
