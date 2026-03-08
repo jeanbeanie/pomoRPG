@@ -86,6 +86,10 @@ function App() {
 
     /* DISPLAY LOGIC */
 
+    function getNextSkill(xp: number) {
+        return skills.find(skill => skill.xpRequired > xp);
+    }
+
     const shouldShowBreakSummary = mode === 'break' && lastRunSummary !== null;
 
     const handleContinue = () => {
@@ -126,7 +130,7 @@ function App() {
     }
 
     /* RENDER */
-
+    const nextSkill = getNextSkill(xp);
     // return (
    // todo - cleanup conditional rendering logic, make page components
     if (mode === "home") {
@@ -136,11 +140,18 @@ function App() {
                 <p>The adventurer is itchin' to explore...</p>
                 <Button onClick={() => { setMode('focus'); start(); }}>Start Focus Session</Button>
                 <div>
-                    <h3>Character: Level {character.level}</h3>
+                    <h3>Character Level {character.level}</h3>
                     <p>Attack: {character.attack}</p>
                     <p>Speed: {character.speed}</p>
 
                 </div>
+                {nextSkill && (
+                    <div>
+                        <b>Player Level { level } </b>
+                        <p>Next Unlock: {nextSkill.name}</p>
+                        <p>XP: {xp } / {nextSkill.xpRequired}</p>
+                    </div>
+                )}
             </div>
         );
     } else {
