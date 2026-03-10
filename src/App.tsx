@@ -171,6 +171,7 @@ function App() {
                 callback={handleContinue}
                 upgradeOptions={upgradeOptions}
                 onUpgradeSelect={handleUpgradeSelect}
+                projectName={projectName}
             />
         ) : (
             <div>
@@ -182,14 +183,14 @@ function App() {
                     pause={pause}
                     reset={() => { setMode('focus'); reset() }}
                     />
-                <p>The adventurer ventures into the woods...</p>
+                    <p>While you work on {projectName.toLowerCase()}, the adventurer ventures into the woods...</p>
                     {/* TODO - move these components
                 <XpDisplay xp={xp} />
                 <h4>Level: {level}</h4>
                 <XpBar xp={xp} />
                     <SkillTree xp={xp} />
                     */}
-                
+                    <Button onClick={() => { setMode('home'); reset(); }}>End Session</Button>
             </div>
         )
     }
