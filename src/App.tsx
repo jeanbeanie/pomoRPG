@@ -25,6 +25,7 @@ function App() {
 
     /* STATE */
     const [mode, setMode] = useState<'home' | 'focus' | 'break'>('home');
+    const [projectName, setProjectName] = useState('');
     const [xp, setXp] = useState(() => {
         const saved = localStorage.getItem('pomorpg_xp');
         return saved ? Number(saved) : 0;
@@ -138,6 +139,12 @@ function App() {
             <div>
                 <h1>PomoRPG</h1>
                 <p>The adventurer is itchin' to explore...</p>
+                <input
+                    type="text"
+                    placeholder="What are you working on?"
+                    value={projectName}
+                    onChange={(e) => setProjectName(e.target.value)}
+                    />
                 <Button onClick={() => { setMode('focus'); start(); }}>Start Focus Session</Button>
                 <div>
                     <h3>Character Level {character.level}</h3>
