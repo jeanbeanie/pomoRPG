@@ -16,13 +16,17 @@ interface BreakSummaryProps {
 const BreakSummary: React.FC<BreakSummaryProps> = ({ enemiesDefeated=0, goldEarned=0, xpEarned=0, characterXpEarned=0, projectName="", callback, upgradeOptions, onUpgradeSelect }) => {
     return (
         <div id="breakSummary">
-            <h2>{ projectName } Focus Session Complete!</h2>
-            <b>The adventurer successfully explored the woods.</b>
+            <h2>{projectName} Focus Session Complete!</h2>
+            <hr />
+            <p>XP Earned: +{xpEarned}</p>
+            
+            <p>The adventurer successfully explored the woods.</p>
+            <b>Character Run:</b>
             <p>Enemies Defeated: {enemiesDefeated}</p>
             <p>Gold Earned: {goldEarned}</p>
             <p>Character XP Earned: {characterXpEarned}</p>
-            <p>You've gained { xpEarned } XP!</p>
-            <h4>Choose an Upgrade:</h4>
+            
+            <b>Choose an Upgrade:</b>
             {
                 upgradeOptions.map((option, index) => (
                     <Button key={index} onClick={() => { onUpgradeSelect(option) }}>{option.type}</Button>

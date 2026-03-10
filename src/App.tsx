@@ -12,6 +12,7 @@ import BreakSummary from './components/BreakSummary';
 /* Game logic imports */
 import { useTimer } from './hooks/useTimer';
 import { skills } from './data/skills';
+import { getDailyStreak } from './game/streaks';
 import { getXpReward } from './game/gameLogic';
 import { applyCharacterXp, createNewCharacter, type Character } from './game/character';
 import { type runResults, simulateRun } from './game/simulateRun';
@@ -101,6 +102,7 @@ function App() {
 
     /* DISPLAY LOGIC */
 
+    const streak = getDailyStreak();
     function getNextSkill(xp: number) {
         return skills.find(skill => skill.xpRequired > xp);
     }
@@ -153,6 +155,9 @@ function App() {
             <div>
                 <h1>PomoRPG</h1>
                 <p>The adventurer is itchin' to explore...</p>
+                <div className="streak">
+                    🔥 {streak} day streak
+                </div>
                 <input
                     type="text"
                     placeholder="What are you working on?"
