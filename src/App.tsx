@@ -16,6 +16,7 @@ import { getXpReward } from './game/gameLogic';
 import { applyCharacterXp, createNewCharacter, type Character } from './game/character';
 import { type runResults, simulateRun } from './game/simulateRun';
 import { generateUpgradeOptions, type UpgradeOption } from './game/upgrades';
+import { loadSessions, saveSession } from './utils/sessionStorage';
 /* Styles */
 import './App.css'
 import Button from './components/Button';
@@ -64,12 +65,25 @@ function App() {
         localStorage.setItem('pomorpg_xp', xp.toString());
     }, [xp]);
 
+
+
     // when a pomodoro completes, calculate rewards and start break
     useEffect(() => {
         if (secondsLeft === 0 && !isRunning && mode === 'focus') {
-            const reward = getXpReward(unlockedSkills);
-            console.log(`Pomodoro complete! Gained ${reward} XP.`);
-            setXp((prev) => prev + reward);
+            function completePomodoro() {
+                const reward = getXpReward(unlockedSkills);
+                const session = {
+                    id: crypto.randomUUID(),
+                    project: projectName || "Untitled",
+                    completedAt: Date.now(),
+                    xpEarned: reward,
+                    duration: POMODORO_DURATION
+                };
+                saveSession(session);
+                setXp((prev) => prev + reward);
+                console.log(`Pomodoro saved! Earned ${reward} XP for working on ${session.project}. Total XP: ${xp + reward}`);
+            }
+            completePomodoro();
 
             const run = simulateRun(POMODORO_DURATION, character);
             setLastRunSummary(run);
@@ -83,7 +97,7 @@ function App() {
             //}, 5 * 60 * 1000);
             // longer break every 4 pomodoros
         }
-    }, [secondsLeft, isRunning, mode, POMODORO_DURATION, character, unlockedSkills]);
+    }, [secondsLeft, isRunning, mode, POMODORO_DURATION, character, unlockedSkills, projectName]);
 
     /* DISPLAY LOGIC */
 
