@@ -17,7 +17,7 @@ import { getXpReward } from './game/gameLogic';
 import { applyCharacterXp, createNewCharacter, type Character } from './game/character';
 import { type runResults, simulateRun } from './game/simulateRun';
 import { generateUpgradeOptions, type UpgradeOption } from './game/upgrades';
-import { loadSessions, saveSession } from './utils/sessionStorage';
+import { saveSession } from './utils/sessionStorage';
 /* Styles */
 import './App.css'
 import Button from './components/Button';
