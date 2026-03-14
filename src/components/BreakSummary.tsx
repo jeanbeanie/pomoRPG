@@ -9,11 +9,12 @@ interface BreakSummaryProps {
     upgradeOptions: UpgradeOption[];
     projectName?: string;
     onUpgradeSelect: (option: UpgradeOption) => void;
+    selectedOption?: UpgradeOption;
     callback: () => void;
 }
 // todo - add flavor text prop
 
-const BreakSummary: React.FC<BreakSummaryProps> = ({ enemiesDefeated=0, goldEarned=0, xpEarned=0, characterXpEarned=0, projectName="", callback, upgradeOptions, onUpgradeSelect }) => {
+const BreakSummary: React.FC<BreakSummaryProps> = ({ enemiesDefeated=0, goldEarned=0, xpEarned=0, characterXpEarned=0, projectName="", callback, upgradeOptions, onUpgradeSelect, selectedOption=null }) => {
     return (
         <div id="breakSummary">
             <h2>{projectName} Focus Session Complete!</h2>
@@ -29,7 +30,13 @@ const BreakSummary: React.FC<BreakSummaryProps> = ({ enemiesDefeated=0, goldEarn
             <b>Choose an Upgrade:</b>
             {
                 upgradeOptions.map((option, index) => (
-                    <Button key={index} onClick={() => { onUpgradeSelect(option) }}>{option.type}</Button>
+                    <Button
+                        key={index}
+                        className={ selectedOption === option ? "selected" : ""}
+                        onClick={() => { onUpgradeSelect(option) }}
+                    >
+                        {option.type}
+                    </Button>
                 ))
             }
             <hr/>

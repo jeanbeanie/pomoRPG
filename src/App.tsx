@@ -38,7 +38,7 @@ function App() {
     });
     const [lastRunSummary, setLastRunSummary] = useState<runResults | null>(null);
     const [upgradeOptions, setUpgradeOptions] = useState<UpgradeOption[]>([]);
-    const [selectedOption, setSelectedOption] = useState<UpgradeOption | null>(null);
+    const [selectedUpgrade, setSelectedUpgrade] = useState<UpgradeOption | null>(null);
 
     /* TIMER HOOK */
     const {
@@ -110,7 +110,7 @@ function App() {
     const shouldShowBreakSummary = mode === 'break' && lastRunSummary !== null;
 
     const handleContinue = () => {
-        applyUpgrade(selectedOption!);
+        applyUpgrade(selectedUpgrade!);
         const xpEarned = lastRunSummary?.characterXpEarned || 0;
         setCharacter(prev => applyCharacterXp(prev, xpEarned));
         setLastRunSummary(null);
@@ -120,16 +120,7 @@ function App() {
 
     const handleUpgradeSelect = (option: UpgradeOption) => {
         // highlight selected option in UI
-        document.querySelectorAll('#breakSummary button').forEach((btn) => {
-            if (btn.textContent === option.type) {
-                btn.classList.add('selected');
-            }
-            else {
-                btn.classList.remove('selected');
-            }
-        });
-
-        setSelectedOption(option);
+        setSelectedUpgrade(option);
     }
 
     function applyUpgrade(option: UpgradeOption) {
@@ -189,6 +180,7 @@ function App() {
                 xpEarned={ getXpReward(unlockedSkills)}
                 callback={handleContinue}
                 upgradeOptions={upgradeOptions}
+                selectedOption={selectedUpgrade ?? undefined}
                 onUpgradeSelect={handleUpgradeSelect}
                 projectName={projectName}
             />
