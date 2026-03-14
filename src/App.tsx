@@ -107,10 +107,11 @@ function App() {
         return skills.find(skill => skill.xpRequired > xp);
     }
 
-    const shouldShowBreakSummary = mode === 'break' && lastRunSummary !== null;
+    //const shouldShowBreakSummary = mode === 'break' && lastRunSummary !== null;
 
     const handleContinue = () => {
-        applyUpgrade(selectedUpgrade!);
+        if (!selectedUpgrade) return;
+        applyUpgrade(selectedUpgrade);
         const xpEarned = lastRunSummary?.characterXpEarned || 0;
         setCharacter(prev => applyCharacterXp(prev, xpEarned));
         setLastRunSummary(null);
@@ -140,51 +141,54 @@ function App() {
     /* RENDER */
     const nextSkill = getNextSkill(xp);
     // return (
-   // todo - cleanup conditional rendering logic, make page components
-    if (mode === "home") {
-        return (
-            <div>
-                <h1>PomoRPG</h1>
-                <p>The adventurer is itchin' to explore...</p>
-                <div className="streak">
-                    🔥 {streak} day streak
-                </div>
-                <input
-                    type="text"
-                    placeholder="What are you working on?"
-                    value={projectName}
-                    onChange={(e) => setProjectName(e.target.value)}
-                    />
-                <Button onClick={() => { setMode('focus'); start(); }}>Start Focus Session</Button>
+    // todo - cleanup conditional rendering logic, make page components
+    switch (mode) {
+        case "home":
+            return (
                 <div>
-                    <h3>Character Level {character.level}</h3>
-                    <p>Attack: {character.attack}</p>
-                    <p>Speed: {character.speed}</p>
-
-                </div>
-                {nextSkill && (
-                    <div>
-                        <b>Player Level { level } </b>
-                        <p>Next Unlock: {nextSkill.name}</p>
-                        <p>XP: {xp } / {nextSkill.xpRequired}</p>
+                    <h1>PomoRPG</h1>
+                    <p>The adventurer is itchin' to explore...</p>
+                    <div className="streak">
+                        🔥 {streak} day streak
                     </div>
-                )}
-            </div>
-        );
-    } else {
-        return shouldShowBreakSummary ? (
-            <BreakSummary
-                enemiesDefeated={lastRunSummary?.enemiesDefeated}
-                goldEarned={lastRunSummary?.goldEarned}
-                characterXpEarned={lastRunSummary?.characterXpEarned}
-                xpEarned={ getXpReward(unlockedSkills)}
-                callback={handleContinue}
-                upgradeOptions={upgradeOptions}
-                selectedOption={selectedUpgrade ?? undefined}
-                onUpgradeSelect={handleUpgradeSelect}
-                projectName={projectName}
-            />
-        ) : (
+                    <input
+                        type="text"
+                        placeholder="What are you working on?"
+                        value={projectName}
+                        onChange={(e) => setProjectName(e.target.value)}
+                        />
+                    <Button onClick={() => { setMode('focus'); start(); }}>Start Focus Session</Button>
+                    <div>
+                        <h3>Character Level {character.level}</h3>
+                        <p>Attack: {character.attack}</p>
+                        <p>Speed: {character.speed}</p>
+
+                    </div>
+                    {nextSkill && (
+                        <div>
+                            <b>Player Level { level } </b>
+                            <p>Next Unlock: {nextSkill.name}</p>
+                            <p>XP: {xp } / {nextSkill.xpRequired}</p>
+                        </div>
+                    )}
+                </div>
+            );
+        case "break": 
+            return (
+                <BreakSummary
+                    enemiesDefeated={lastRunSummary?.enemiesDefeated}
+                    goldEarned={lastRunSummary?.goldEarned}
+                    characterXpEarned={lastRunSummary?.characterXpEarned}
+                    xpEarned={getXpReward(unlockedSkills)}
+                    callback={handleContinue}
+                    upgradeOptions={upgradeOptions}
+                    selectedOption={selectedUpgrade ?? undefined}
+                    onUpgradeSelect={handleUpgradeSelect}
+                    projectName={projectName}
+                />
+            );
+        case "focus":
+            return (
             <div>
                 <h1>PomoRPG</h1>
                 <TimerDisplay time={formattedTime} />
@@ -205,7 +209,6 @@ function App() {
             </div>
         )
     }
-   // );
 }
 
 export default App;
