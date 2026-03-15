@@ -19,7 +19,7 @@ import { applyCharacterXp, createNewCharacter, type Character } from './game/cha
 import { type runResults, simulateRun } from './game/simulateRun';
 import { generateUpgradeOptions, type UpgradeOption } from './game/upgrades';
 import { generateAdventureEntry, saveAdventureEntry } from './game/adventureLog';
-import { saveSession } from './utils/sessionStorage';
+import { savePomoSession } from './utils/sessionStorage';
 /* Styles */
 import './App.css';
 import Button from './components/Button';
@@ -82,7 +82,7 @@ function App() {
                     xpEarned: reward,
                     duration: POMODORO_DURATION
                 };
-                saveSession(session);
+                savePomoSession(session);
                 setXp((prev) => prev + reward);
                 console.log(`Pomodoro saved! Earned ${reward} XP for working on ${session.project}. Total XP: ${xp + reward}`);
             }
