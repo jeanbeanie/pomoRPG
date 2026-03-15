@@ -9,6 +9,7 @@ import XpDisplay from './components/XpDisplay';
 import XpBar from './components/XpBar';
 import SkillTree from './components/SkillTree';
 import BreakSummary from './components/BreakSummary';
+import AdventureLog from './components/AdventureLog';
 /* Game logic imports */
 import { useTimer } from './hooks/useTimer';
 import { skills } from './data/skills';
@@ -17,9 +18,10 @@ import { getXpReward } from './game/gameLogic';
 import { applyCharacterXp, createNewCharacter, type Character } from './game/character';
 import { type runResults, simulateRun } from './game/simulateRun';
 import { generateUpgradeOptions, type UpgradeOption } from './game/upgrades';
+import { generateAdventureEntry, saveAdventureEntry } from './game/adventureLog';
 import { saveSession } from './utils/sessionStorage';
 /* Styles */
-import './App.css'
+import './App.css';
 import Button from './components/Button';
 
 function App() {
@@ -88,6 +90,10 @@ function App() {
 
             const run = simulateRun(POMODORO_DURATION, character);
             setLastRunSummary(run);
+
+            const entry = generateAdventureEntry(projectName, run.enemiesDefeated);
+            saveAdventureEntry(entry);
+
             setUpgradeOptions(generateUpgradeOptions());
             console.log(`Run summary: ${run.enemiesDefeated} enemies defeated, ${run.goldEarned} gold earned, ${run.characterXpEarned} XP earned.`);
 
@@ -164,6 +170,7 @@ function App() {
                         <p>Speed: {character.speed}</p>
 
                     </div>
+                    <AdventureLog />
                     {nextSkill && (
                         <div>
                             <b>Player Level { level } </b>
