@@ -1,3 +1,5 @@
+import { Character } from "./character";
+
 export type Boss = {
     name: string;
     hp: number;
@@ -19,4 +21,17 @@ export function incrementPomoCounter(): number {
 
     localStorage.setItem(BOSS_COUNTER_KEY, newCount.toString());
     return newCount;
+}
+
+export function simulateBossFight(character: Character) {
+    // For now, just compare attack values with some randomness
+    const boss = bosses[Math.floor(Math.random() * bosses.length)];
+    const playerDamage = character.attack + Math.random() * 2;
+    const bossDamage = boss.attack + Math.random() * 2;
+    const victory = playerDamage >= bossDamage;
+
+    return {
+        boss,
+        victory
+    }
 }
