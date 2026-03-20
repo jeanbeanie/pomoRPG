@@ -17,6 +17,7 @@ import { getDailyStreak } from './game/streaks';
 import { getXpReward } from './game/gameLogic';
 import { applyCharacterXp, createNewCharacter, type Character } from './game/character';
 import { type runResults, simulateRun } from './game/simulateRun';
+import { type Boss, incrementPomoCounter, simulateBossFight } from './game/bosses';
 import { generateUpgradeOptions, type UpgradeOption } from './game/upgrades';
 import { generateAdventureEntry, saveAdventureEntry } from './game/adventureLog';
 import { savePomoSession } from './utils/sessionStorage';
@@ -39,6 +40,7 @@ function App() {
         return saved ? JSON.parse(saved) : createNewCharacter();
     });
     const [lastRunSummary, setLastRunSummary] = useState<runResults | null>(null);
+    const [bossResult, setBossResult] = useState < { boss:Boss } | null>(null);
     const [upgradeOptions, setUpgradeOptions] = useState<UpgradeOption[]>([]);
     const [selectedUpgrade, setSelectedUpgrade] = useState<UpgradeOption | null>(null);
 
@@ -71,6 +73,12 @@ function App() {
 
 
     // when a pomodoro completes, calculate rewards and start break
+    function triggerBossFight() {
+        const result = simulateBossFight(character);
+        setBossResult(result);
+    }
+
+
     useEffect(() => {
         if (secondsLeft === 0 && !isRunning && mode === 'focus') {
             function completePomodoro() {
@@ -93,6 +101,11 @@ function App() {
 
             const entry = generateAdventureEntry(projectName, run.enemiesDefeated);
             saveAdventureEntry(entry);
+
+            const count = incrementPomoCounter();
+            if (count % 4 === 0) {
+                triggerBossFight();
+            }
 
             setUpgradeOptions(generateUpgradeOptions());
             console.log(`Run summary: ${run.enemiesDefeated} enemies defeated, ${run.goldEarned} gold earned, ${run.characterXpEarned} XP earned.`);
