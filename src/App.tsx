@@ -30,6 +30,7 @@ function App() {
 
     /* STATE */
     const [mode, setMode] = useState<'home' | 'focus' | 'break'>('home');
+    const [autoCycle, setAutoCycle] = useState(false);
     const [projectName, setProjectName] = useState('');
     const [xp, setXp] = useState(() => {
         const saved = localStorage.getItem('pomorpg_xp');
@@ -134,8 +135,12 @@ function App() {
         const xpEarned = lastRunSummary?.characterXpEarned || 0;
         setCharacter(prev => applyCharacterXp(prev, xpEarned));
         setLastRunSummary(null);
-        setMode('focus');
-        reset();
+        if (autoCycle) {
+            setMode('focus');
+            start()
+        } else {
+            setMode('home');
+        }
     };
 
     const handleUpgradeSelect = (option: UpgradeOption) => {
@@ -159,8 +164,7 @@ function App() {
 
     /* RENDER */
     const nextSkill = getNextSkill(xp);
-    // return (
-    // todo - cleanup conditional rendering logic, make page components
+
     switch (mode) {
         case "home":
             return (
@@ -218,14 +222,16 @@ function App() {
                     pause={pause}
                     reset={() => { setMode('focus'); reset() }}
                     />
-                    <p>While you work on {projectName.toLowerCase()}, the adventurer ventures into the woods...</p>
-                    {/* TODO - move these components
-                <XpDisplay xp={xp} />
-                <h4>Level: {level}</h4>
-                <XpBar xp={xp} />
-                    <SkillTree xp={xp} />
-                    */}
-                    <Button onClick={() => { setMode('home'); reset(); }}>End Session</Button>
+                <p>While you work on {projectName.toLowerCase()}, the adventurer ventures into the woods...</p>
+                <Button onClick={() => { setMode('home'); reset(); }}>End Session</Button>
+                <label>
+                    <input
+                        type="checkbox"
+                        checked={autoCycle}
+                        onChange={(e) => setAutoCycle(e.target.checked)}
+                    />
+                    Auto-start Next Session
+                </label>
             </div>
         )
     }
