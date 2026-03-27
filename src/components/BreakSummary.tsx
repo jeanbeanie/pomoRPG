@@ -1,7 +1,9 @@
 import { type UpgradeOption } from '../game/upgrades';
 import Button from './Button';
+import { type Boss } from '../game/bosses';
 
 interface BreakSummaryProps {
+    bossResult?: { boss: Boss, victory: boolean };
     enemiesDefeated?: number;
     goldEarned?: number;
     characterXpEarned?: number;
@@ -14,8 +16,16 @@ interface BreakSummaryProps {
 }
 // todo - add flavor text prop
 
-const BreakSummary: React.FC<BreakSummaryProps> = ({ enemiesDefeated=0, goldEarned=0, xpEarned=0, characterXpEarned=0, projectName="", callback, upgradeOptions, onUpgradeSelect, selectedOption=null }) => {
-    return (
+const BreakSummary: React.FC<BreakSummaryProps> = ({ bossResult, enemiesDefeated = 0, goldEarned = 0, xpEarned = 0, characterXpEarned = 0, projectName = "", callback, upgradeOptions, onUpgradeSelect, selectedOption = null }) => {
+    return bossResult ? (
+        <div>
+            <h2>Boss Battle : {bossResult.boss.name}</h2>
+            {
+                bossResult.victory ? ("Yay"): ("Nooo")
+            }
+            <Button onClick={() => { callback() }}>Continue</Button>
+        </div>
+        ) : (
         <div id="breakSummary">
             <h2>{projectName} Focus Session Complete!</h2>
             <hr />
