@@ -26,7 +26,7 @@ import './App.css';
 import Button from './components/Button';
 
 function App() {
-    const POMODORO_DURATION = 1 * 60; // 25 minutes in seconds
+    const POMODORO_DURATION = 25 * 60; // 25 minutes in seconds
 
     /* STATE */
     const [mode, setMode] = useState<'home' | 'focus' | 'break'>('home');
@@ -126,8 +126,6 @@ function App() {
     function getNextSkill(xp: number) {
         return skills.find(skill => skill.xpRequired > xp);
     }
-
-    //const shouldShowBreakSummary = mode === 'break' && lastRunSummary !== null;
 
     const handleContinue = () => {
         if (!selectedUpgrade) return;
