@@ -41,7 +41,7 @@ function App() {
         return saved ? JSON.parse(saved) : createNewCharacter();
     });
     const [lastRunSummary, setLastRunSummary] = useState<runResults | null>(null);
-    const [bossResult, setBossResult] = useState < { boss:Boss } | null>(null);
+    const [bossResult, setBossResult] = useState < { boss:Boss, victory:boolean } | null>(null);
     const [upgradeOptions, setUpgradeOptions] = useState<UpgradeOption[]>([]);
     const [selectedUpgrade, setSelectedUpgrade] = useState<UpgradeOption | null>(null);
 
@@ -133,6 +133,7 @@ function App() {
         const xpEarned = lastRunSummary?.characterXpEarned || 0;
         setCharacter(prev => applyCharacterXp(prev, xpEarned));
         setLastRunSummary(null);
+        setBossResult(null);
         if (autoCycle) {
             setMode('focus');
             start()
@@ -198,6 +199,7 @@ function App() {
         case "break": 
             return (
                 <BreakSummary
+                    bossResult={bossResult ?? undefined}
                     enemiesDefeated={lastRunSummary?.enemiesDefeated}
                     goldEarned={lastRunSummary?.goldEarned}
                     characterXpEarned={lastRunSummary?.characterXpEarned}

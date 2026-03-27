@@ -21,7 +21,20 @@ const BreakSummary: React.FC<BreakSummaryProps> = ({ bossResult, enemiesDefeated
         <div>
             <h2>Boss Battle : {bossResult.boss.name}</h2>
             {
-                bossResult.victory ? ("Yay"): ("Nooo")
+                bossResult.victory ?
+                    (<p>Yay</p>) : (<p>Nooo</p>)
+            }
+            <b>Choose an Upgrade:</b>
+            {
+                upgradeOptions.map((option, index) => (
+                    <Button
+                        key={index}
+                        className={selectedOption === option ? "selected" : ""}
+                        onClick={() => { onUpgradeSelect(option) }}
+                    >
+                        {option.type}
+                    </Button>
+                ))
             }
             <Button onClick={() => { callback() }}>Continue</Button>
         </div>
