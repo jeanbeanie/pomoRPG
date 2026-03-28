@@ -1,4 +1,6 @@
-import {type Character } from "./character";
+// src/game/bosses.ts
+
+import { type Character } from "./character";
 
 export type Boss = {
     name: string;
@@ -13,7 +15,13 @@ export const bosses: Boss[] = [
 ];
 
 const BOSS_COUNTER_KEY = "pomorpg_pomo_counter";
+const BOSS_FIGHT_INTERVAL = 4; // Every 4 pomodoros
 
+export function getBossProgress(total: number = BOSS_FIGHT_INTERVAL): number {
+    const raw = localStorage.getItem(BOSS_COUNTER_KEY);
+    const count = raw ? Number(raw) : 0;
+    return count % total;
+}
 export function incrementPomoCounter(): number {
     const raw = localStorage.getItem(BOSS_COUNTER_KEY);
     const currentCount = raw ? Number(raw) : 0;
