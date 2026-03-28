@@ -13,7 +13,7 @@ import AdventureLog from './components/AdventureLog';
 /* Game logic imports */
 import { useTimer } from './hooks/useTimer';
 import { skills } from './data/skills';
-import { getDailyStreak } from './game/streaks';
+import { getDailyStreak, getBestDailyStreak } from './game/streaks';
 import { getXpReward } from './game/gameLogic';
 import { applyCharacterXp, createNewCharacter, type Character } from './game/character';
 import { type runResults, simulateRun } from './game/simulateRun';
@@ -122,7 +122,7 @@ function App() {
 
     /* DISPLAY LOGIC */
 
-    const streak = getDailyStreak();
+ 
     function getNextSkill(xp: number) {
         return skills.find(skill => skill.xpRequired > xp);
     }
@@ -163,6 +163,8 @@ function App() {
 
     /* RENDER */
     const nextSkill = getNextSkill(xp);
+    const streak = getDailyStreak();
+    const bestStreak = getBestDailyStreak();
 
     switch (mode) {
         case "home":
@@ -171,7 +173,8 @@ function App() {
                     <h1>PomoRPG</h1>
                     <p>The adventurer is itchin' to explore...</p>
                     <div className="streak">
-                        🔥 {streak} day streak
+                        <p>🔥 {streak} day streak</p>
+                        <p style={{ opacity: 0.85 }} > 🏆 Best: {bestStreak}</p>
                     </div>
                     <input
                         type="text"

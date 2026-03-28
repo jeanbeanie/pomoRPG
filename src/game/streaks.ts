@@ -45,3 +45,36 @@ export function getDailyStreak(): number {
 
     return streak;
 }
+
+export function getBestDailyStreak(): number {
+    const sessions = loadPomoSessions();
+    const uniqueDates = new Set<number>();
+
+    for (const session of sessions) {
+        const date = new Date(session.completedAt);
+        uniqueDates.add(date.setHours(0, 0, 0, 0)); // Normalize to start of day
+    }
+    // Sort the unique dates in ascending order
+    const sortedDates = Array.from(uniqueDates).sort((a, b) => a - b);
+    let bestStreak = 0;
+    let currentStreak = 0;
+    let previousDate = null;
+    const oneDay = 24 * 60 * 60 * 1000; // milliseconds in one day
+
+    // Iterate through sorted dates and count consecutive days
+    for (const date of sortedDates) {
+        // If it's the first date or it's exactly one day after the previous date, continue the streak
+        if (previousDate === null || date === previousDate + oneDay) {
+            currentStreak++;
+        } else {
+            // Streak is broken, update best streak if needed and reset current streak
+            bestStreak = Math.max(bestStreak, currentStreak);
+            // reset streak
+            currentStreak = 1; 
+        } // Update previous date for next iteration
+        previousDate = date;
+    }
+    // Check at the end in case the longest streak is at the end of list
+    bestStreak = Math.max(bestStreak, currentStreak); 
+    return bestStreak;
+}
