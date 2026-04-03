@@ -204,6 +204,8 @@ function App() {
             );
         case "break": 
             return (
+                <div>
+                    <BossMeter progress={bossProgress} total={4} />
                 <BreakSummary
                     bossResult={bossResult ?? undefined}
                     enemiesDefeated={lastRunSummary?.enemiesDefeated}
@@ -215,7 +217,8 @@ function App() {
                     selectedOption={selectedUpgrade ?? undefined}
                     onUpgradeSelect={handleUpgradeSelect}
                     projectName={projectName}
-                />
+                    />
+                </div>
             );
         case "focus":
             return (
