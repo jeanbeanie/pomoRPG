@@ -1,4 +1,5 @@
 /* Main application component for PomoRPG - a gamified Pomodoro timer with RPG elements. */
+// src/App.tsx
 
 import * as React from 'react';
 import { useState, useEffect } from 'react';
@@ -10,6 +11,7 @@ import XpBar from './components/XpBar';
 import SkillTree from './components/SkillTree';
 import BreakSummary from './components/BreakSummary';
 import AdventureLog from './components/AdventureLog';
+import BossMeter from './components/BossMeter';
 /* Game logic imports */
 import { useTimer } from './hooks/useTimer';
 import { skills } from './data/skills';
@@ -17,7 +19,7 @@ import { getDailyStreak, getBestDailyStreak } from './game/streaks';
 import { getXpReward } from './game/gameLogic';
 import { applyCharacterXp, createNewCharacter, type Character } from './game/character';
 import { type runResults, simulateRun } from './game/simulateRun';
-import { type Boss, incrementPomoCounter, simulateBossFight } from './game/bosses';
+import { type Boss, incrementPomoCounter, simulateBossFight, getBossProgress } from './game/bosses';
 import { generateUpgradeOptions, type UpgradeOption } from './game/upgrades';
 import { generateAdventureEntry, saveAdventureEntry } from './game/adventureLog';
 import { savePomoSession } from './utils/sessionStorage';
@@ -165,6 +167,7 @@ function App() {
     const nextSkill = getNextSkill(xp);
     const streak = getDailyStreak();
     const bestStreak = getBestDailyStreak();
+    const bossProgress = getBossProgress(4);
 
     switch (mode) {
         case "home":
@@ -225,6 +228,7 @@ function App() {
                     pause={pause}
                     reset={() => { setMode('focus'); reset() }}
                     />
+                <BossMeter progress={bossProgress} total={4} />
                 <p>While you work on {projectName.toLowerCase()}, the adventurer ventures into the woods...</p>
                 <Button onClick={() => { setMode('home'); reset(); }}>End Session</Button>
                 <label>
