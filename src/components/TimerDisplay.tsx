@@ -1,4 +1,4 @@
-
+// src/components/TimerDisplay.tsx
 interface TimerDisplayProps {
     time: string; // formatted time string
 }

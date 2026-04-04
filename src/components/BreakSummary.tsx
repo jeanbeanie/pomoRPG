@@ -1,3 +1,5 @@
+// src/components/BreakSummary.tsx
+
 import { type UpgradeOption } from '../game/upgrades';
 import Button from './Button';
 import { type Boss } from '../game/bosses';

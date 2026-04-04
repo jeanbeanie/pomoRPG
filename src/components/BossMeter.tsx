@@ -1,3 +1,5 @@
+// src/components/BossMeter.tsx
+
 import React from 'react';
 
 type BossMeterProps = {

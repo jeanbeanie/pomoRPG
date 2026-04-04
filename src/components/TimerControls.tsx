@@ -1,3 +1,5 @@
+// src/components/TimerControls.tsx
+
 import Button from './Button';
 interface TimerControlsProps {
     isRunning: boolean;

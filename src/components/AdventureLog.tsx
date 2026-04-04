@@ -1,3 +1,5 @@
+// src/components/AdventureLog.tsx
+
 import { loadAdventureLog } from '../game/adventureLog';
 
 export default function AdventureLog() {

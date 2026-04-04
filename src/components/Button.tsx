@@ -1,3 +1,4 @@
+// src/components/Button.tsx
 //custom button component
 interface ButtonProps {
     onClick: () => void;
