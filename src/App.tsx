@@ -10,6 +10,7 @@ import TimerControls from './components/TimerControls';
 import BreakSummary from './components/BreakSummary';
 import AdventureLog from './components/AdventureLog';
 import BossMeter from './components/BossMeter';
+import SkillTree from './components/SkillTree';
 
 /* Game logic imports */
 import { useTimer } from './hooks/useTimer';
@@ -67,10 +68,6 @@ function App() {
         formattedTime
     } = useTimer(POMODORO_DURATION);
 
-    // player level and unlocked skills
-    const accountLevel = Math.floor(xp / 100);
-
-
      // persist character and xp to localStorage whenever they change
     useEffect(() => {
         localStorage.setItem('pomorpg_character', JSON.stringify(character));
@@ -84,17 +81,7 @@ function App() {
     useEffect(() => {
         localStorage.setItem('pomorpg_unlocked_skills', JSON.stringify(unlockedSkills));
     }, [unlockedSkills]);
-    // avoid granting points on initial load by using a ref to track previous level
-    const prevAccountLevelRef = React.useRef(accountLevel);
-    useEffect(() => {
-        const prevLevel = prevAccountLevelRef.current;
-        console.log(`Account level: ${accountLevel}, Previous level: ${prevLevel}`);
-        if (accountLevel > prevLevel) {
-            // grant skill points for each level gained
-            setSkillPoints((prev) => prev + (accountLevel - prevLevel));
-            prevAccountLevelRef.current = accountLevel;
-        }
-    }, [accountLevel]);
+   
 
     // when a pomodoro completes, calculate rewards and start break
     function triggerBossFight() {
@@ -246,13 +233,19 @@ function App() {
                         
                     </div>
                     <AdventureLog />
-                    
+                    <SkillTree
+                        skillPoints={skillPointsAvailable}
+                        unlockedBranches={unlockedBranches}
+                        unlockedSkillIds={unlockedSkills}
+                        onUnlockBranch={handleUnlockBranch}
+                        onUnlockSkill={handleUnlockSkill}
+                    />
                 </div>
             );
         case "break": 
             return (
                 <div>
-                    <BossMeter progress={bossProgress} total={4} />
+                    {!bossResult && <BossMeter progress={bossProgress} total={4} />}
                     <BreakSummary
                         bossResult={bossResult ?? undefined}
                         enemiesDefeated={lastRunSummary?.enemiesDefeated}

@@ -11,7 +11,7 @@ interface SkillTreeProps {
     unlockedBranches: SkillBranch[];
     unlockedSkillIds: string[];
     onUnlockBranch: (branch: SkillBranch) => void;
-    onUnlockSkill: (skill: Skill) => void;
+    onUnlockSkill: (skillId: string) => void;
 }
 
 
