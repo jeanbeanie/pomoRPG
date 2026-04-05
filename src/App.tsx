@@ -90,7 +90,17 @@ function App() {
     useEffect(() => {
         localStorage.setItem('pomorpg_unlocked_skills', JSON.stringify(unlockedSkills));
     }, [unlockedSkills]);
-
+    // avoid granting points on initial load by using a ref to track previous level
+    const prevAccountLevelRef = React.useRef(accountLevel);
+    useEffect(() => {
+        const prevLevel = prevAccountLevelRef.current;
+        console.log(`Account level: ${accountLevel}, Previous level: ${prevLevel}`);
+        if (accountLevel > prevLevel) {
+            // grant skill points for each level gained
+            setSkillPoints((prev) => prev + (accountLevel - prevLevel));
+            prevAccountLevelRef.current = accountLevel;
+        }
+    }, [accountLevel]);
 
     // when a pomodoro completes, calculate rewards and start break
     function triggerBossFight() {
@@ -141,11 +151,6 @@ function App() {
 
     /* DISPLAY LOGIC */
 
- 
-    function getNextSkill(xp: number) {
-        return skills.find(skill => skill.xpRequired > xp);
-    }
-
     const handleContinue = () => {
         if (!selectedUpgrade) return;
         applyUpgrade(selectedUpgrade);
@@ -181,7 +186,6 @@ function App() {
     }
 
     /* RENDER */
-    const nextSkill = getNextSkill(xp);
     const streak = getDailyStreak();
     const bestStreak = getBestDailyStreak();
     const bossProgress = getBossProgress(4);
@@ -201,22 +205,18 @@ function App() {
                         placeholder="What are you working on?"
                         value={projectName}
                         onChange={(e) => setProjectName(e.target.value)}
-                        />
+                    />
+                    
                     <Button onClick={() => { setMode('focus'); start(); }}>Start Focus Session</Button>
+                    <p>XP: {xp} | SP: {skillPoints}</p>
                     <div>
                         <h3>Character Level {character.level}</h3>
                         <p>Attack: {character.attack}</p>
                         <p>Speed: {character.speed}</p>
-
+                        
                     </div>
                     <AdventureLog />
-                    {nextSkill && (
-                        <div>
-                            <b>Player Level { level } </b>
-                            <p>Next Unlock: {nextSkill.name}</p>
-                            <p>XP: {xp } / {nextSkill.xpRequired}</p>
-                        </div>
-                    )}
+                    
                 </div>
             );
         case "break": 
