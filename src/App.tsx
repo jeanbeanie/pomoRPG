@@ -38,10 +38,7 @@ function App() {
         const saved = localStorage.getItem('pomorpg_xp');
         return saved ? Number(saved) : 0;
     });
-    const [skillPoints, setSkillPoints] = useState(() => {
-        const saved = localStorage.getItem('pomorpg_skill_points');
-        return saved ? Number(saved) : 0;
-    });
+
     const [unlockedBranches, setUnlockedBranches] = useState<SkillBranch[]>(() => {
         const saved = localStorage.getItem('pomorpg_unlocked_branches');
         return saved ? JSON.parse(saved) : [];
@@ -81,9 +78,6 @@ function App() {
     useEffect(() => {
         localStorage.setItem('pomorpg_xp', xp.toString());
     }, [xp]);
-    useEffect(() => {
-        localStorage.setItem('pomorpg_skill_points', skillPoints.toString());
-    }, [skillPoints]);
     useEffect(() => {
         localStorage.setItem('pomorpg_unlocked_branches', JSON.stringify(unlockedBranches));
     }, [unlockedBranches]);
@@ -149,7 +143,18 @@ function App() {
         }
     }, [secondsLeft, isRunning, mode, POMODORO_DURATION, character, unlockedSkills, projectName]);
 
-    /* DISPLAY LOGIC */
+
+    /* SKILL LOGIC */
+
+    const totalSkillPointsEarned = Math.floor(xp / 100);
+    const spSpentOnBranches = unlockedBranches.length <= 1 ? 0 : (unlockedBranches.length - 1) * BRANCH_UNLOCK_COST; // first branch is free
+    const spentOnSkills = unlockedSkills.reduce((sum, skillId) => {
+        const skill = skills.find(s => s.id === skillId);
+        return sum + (skill ? skill.cost : 0);
+    }, 0);
+    const skillPointsAvailable = totalSkillPointsEarned - spSpentOnBranches - spentOnSkills;
+
+    /* DISPLAY HANDLERS LOGIC */
 
     const handleContinue = () => {
         if (!selectedUpgrade) return;
@@ -185,6 +190,31 @@ function App() {
         }
     }
 
+    const handleUnlockBranch = (branch: SkillBranch) => {
+        if (unlockedBranches.includes(branch)) return; // already unlocked
+        const isFirstBranch = unlockedBranches.length === 0;
+        const cost = isFirstBranch ? 0 : BRANCH_UNLOCK_COST;
+
+        if (skillPointsAvailable < cost) return; // not enough SP
+        setUnlockedBranches((prev) => [...prev, branch]);
+    };
+
+    const handleUnlockSkill = (skillId: string) => {
+        if (unlockedSkills.includes(skillId)) return; // already unlocked
+
+        const skill = skills.find(s => s.id === skillId);
+        if (!skill) return; // skill not found
+
+        if (!unlockedBranches.includes(skill.branch)) return; // branch not unlocked
+        // check every prerequisite skill is unlocked
+        const prerequisitesMet = (skill.requires ?? []).every(requirement => unlockedSkills.includes(requirement));
+        if (!prerequisitesMet) return; // prerequisites not met)
+
+        if (skillPointsAvailable < skill.cost) return; // not enough SP
+
+        setUnlockedSkills((prev) => [...prev, skillId]);
+    }
+
     /* RENDER */
     const streak = getDailyStreak();
     const bestStreak = getBestDailyStreak();
@@ -208,7 +238,7 @@ function App() {
                     />
                     
                     <Button onClick={() => { setMode('focus'); start(); }}>Start Focus Session</Button>
-                    <p>XP: {xp} | SP: {skillPoints}</p>
+                    <p>XP: {xp} | SP: {skillPointsAvailable}</p>
                     <div>
                         <h3>Character Level {character.level}</h3>
                         <p>Attack: {character.attack}</p>
