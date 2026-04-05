@@ -5,7 +5,8 @@ export type AdventureEntry = {
     text: string;
     createdAt: number;
 };
-
+// TODO handle boss fights, maybe add a "type" field to the entry to distinguish between normal and boss fights, 
+// and generate different text accordingly
 export function generateAdventureEntry(project: string, enemies: number): AdventureEntry {
     let text = "";
 

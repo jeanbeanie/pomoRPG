@@ -13,7 +13,7 @@ import BossMeter from './components/BossMeter';
 
 /* Game logic imports */
 import { useTimer } from './hooks/useTimer';
-import { skills } from './data/skills';
+import { type SkillBranch, BRANCH_UNLOCK_COST, skills } from './data/skills';
 import { getDailyStreak, getBestDailyStreak } from './game/streaks';
 import { getXpReward } from './game/gameLogic';
 import { applyCharacterXp, createNewCharacter, type Character } from './game/character';
@@ -38,6 +38,19 @@ function App() {
         const saved = localStorage.getItem('pomorpg_xp');
         return saved ? Number(saved) : 0;
     });
+    const [skillPoints, setSkillPoints] = useState(() => {
+        const saved = localStorage.getItem('pomorpg_skill_points');
+        return saved ? Number(saved) : 0;
+    });
+    const [unlockedBranches, setUnlockedBranches] = useState<SkillBranch[]>(() => {
+        const saved = localStorage.getItem('pomorpg_unlocked_branches');
+        return saved ? JSON.parse(saved) : [];
+    });
+    const [unlockedSkills, setUnlockedSkills] = useState<string[]>(() => { // unlocked skill ids
+        const saved = localStorage.getItem('pomorpg_unlocked_skills');
+        return saved ? JSON.parse(saved) : [];
+    });
+
     const [character, setCharacter] = useState<Character>(() => {
         const saved = localStorage.getItem('pomorpg_character');
         return saved ? JSON.parse(saved) : createNewCharacter();
@@ -58,21 +71,25 @@ function App() {
     } = useTimer(POMODORO_DURATION);
 
     // player level and unlocked skills
-    const level = Math.floor(xp / 100);
+    const accountLevel = Math.floor(xp / 100);
 
-    const unlockedSkills = skills
-        .filter(skill => xp >= skill.xpRequired)
-        .map(skill => skill.id);
 
      // persist character and xp to localStorage whenever they change
     useEffect(() => {
         localStorage.setItem('pomorpg_character', JSON.stringify(character));
     }, [character]);
-
     useEffect(() => {
         localStorage.setItem('pomorpg_xp', xp.toString());
     }, [xp]);
-
+    useEffect(() => {
+        localStorage.setItem('pomorpg_skill_points', skillPoints.toString());
+    }, [skillPoints]);
+    useEffect(() => {
+        localStorage.setItem('pomorpg_unlocked_branches', JSON.stringify(unlockedBranches));
+    }, [unlockedBranches]);
+    useEffect(() => {
+        localStorage.setItem('pomorpg_unlocked_skills', JSON.stringify(unlockedSkills));
+    }, [unlockedSkills]);
 
 
     // when a pomodoro completes, calculate rewards and start break
