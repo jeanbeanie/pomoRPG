@@ -226,13 +226,16 @@ function App() {
                     
                     <Button onClick={() => { setMode('focus'); start(); }}>Start Focus Session</Button>
                     <p>XP: {xp} | SP: {skillPointsAvailable}</p>
+                    <hr />
                     <div>
                         <h3>Character Level {character.level}</h3>
                         <p>Attack: {character.attack}</p>
                         <p>Speed: {character.speed}</p>
                         
                     </div>
+                    <hr />
                     <AdventureLog />
+                    <hr />
                     <SkillTree
                         skillPoints={skillPointsAvailable}
                         unlockedBranches={unlockedBranches}
@@ -270,9 +273,13 @@ function App() {
                     start={() => { setMode('focus'); start() }}
                     pause={pause}
                     reset={() => { setMode('focus'); reset() }}
-                    />
+                />
+                <hr />
+
                 <BossMeter progress={bossProgress} total={4} />
                 <p>While you work on {projectName.toLowerCase()}, the adventurer ventures into the woods...</p>
+                <hr />
+
                 <Button onClick={() => { setMode('home'); reset(); }}>End Session</Button>
                 <label>
                     <input

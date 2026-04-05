@@ -12,10 +12,16 @@ div {
     display: flex;
     height: 100vh;
     min-height: fit-content;
+    margin: 3rem 0;
     /* center content vertically */
     justify-content: center;
     /* center content horizontally */
     align-items: center;
+}
+
+hr {
+    border: 1px dotted lightgrey;
+    margin: 2rem auto;
 }
 
 .btn {
