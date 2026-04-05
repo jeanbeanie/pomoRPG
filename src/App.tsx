@@ -1,17 +1,16 @@
-/* Main application component for PomoRPG - a gamified Pomodoro timer with RPG elements. */
 // src/App.tsx
+/* Main application component for PomoRPG - a gamified Pomodoro timer with RPG elements. */
 
 import * as React from 'react';
 import { useState, useEffect } from 'react';
 /* UI component imports */
+import Button from './components/Button';
 import TimerDisplay from './components/TimerDisplay';
 import TimerControls from './components/TimerControls';
-import XpDisplay from './components/XpDisplay';
-import XpBar from './components/XpBar';
-import SkillTree from './components/SkillTree';
 import BreakSummary from './components/BreakSummary';
 import AdventureLog from './components/AdventureLog';
 import BossMeter from './components/BossMeter';
+
 /* Game logic imports */
 import { useTimer } from './hooks/useTimer';
 import { skills } from './data/skills';
@@ -25,9 +24,10 @@ import { generateAdventureEntry, saveAdventureEntry } from './game/adventureLog'
 import { savePomoSession } from './utils/sessionStorage';
 /* Styles */
 import './App.css';
-import Button from './components/Button';
+
 
 function App() {
+    // todo move constants to separate config file
     const POMODORO_DURATION = 25 * 60; // 25 minutes in seconds
 
     /* STATE */
@@ -206,17 +206,17 @@ function App() {
             return (
                 <div>
                     <BossMeter progress={bossProgress} total={4} />
-                <BreakSummary
-                    bossResult={bossResult ?? undefined}
-                    enemiesDefeated={lastRunSummary?.enemiesDefeated}
-                    goldEarned={lastRunSummary?.goldEarned}
-                    characterXpEarned={lastRunSummary?.characterXpEarned}
-                    xpEarned={getXpReward(unlockedSkills)}
-                    callback={handleContinue}
-                    upgradeOptions={upgradeOptions}
-                    selectedOption={selectedUpgrade ?? undefined}
-                    onUpgradeSelect={handleUpgradeSelect}
-                    projectName={projectName}
+                    <BreakSummary
+                        bossResult={bossResult ?? undefined}
+                        enemiesDefeated={lastRunSummary?.enemiesDefeated}
+                        goldEarned={lastRunSummary?.goldEarned}
+                        characterXpEarned={lastRunSummary?.characterXpEarned}
+                        xpEarned={getXpReward(unlockedSkills)}
+                        callback={handleContinue}
+                        upgradeOptions={upgradeOptions}
+                        selectedOption={selectedUpgrade ?? undefined}
+                        onUpgradeSelect={handleUpgradeSelect}
+                        projectName={projectName}
                     />
                 </div>
             );
