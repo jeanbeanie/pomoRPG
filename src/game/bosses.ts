@@ -37,7 +37,7 @@ export function simulateBossFight(character: Character) {
     const playerDamage = character.attack + Math.random() * 2;
     const bossDamage = boss.attack + Math.random() * 2;
     const victory = playerDamage >= bossDamage;
-
+    console.log(`Boss fight against ${boss.name}: Player damage = ${playerDamage.toFixed(2)}, Boss damage = ${bossDamage.toFixed(2)}. Victory: ${victory}`);
     return {
         boss,
         victory
