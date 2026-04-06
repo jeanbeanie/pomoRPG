@@ -1,7 +1,5 @@
 // src/components/BossMeter.tsx
 
-import React from 'react';
-
 type BossMeterProps = {
     progress: number; // 0..total-1
     total?: number; // default every 4 pomodoros
