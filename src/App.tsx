@@ -206,10 +206,11 @@ function App() {
     const streak = getDailyStreak();
     const bestStreak = getBestDailyStreak();
     const bossProgress = getBossProgress(4);
-
+    let content: React.ReactNode;
+   
     switch (mode) {
         case "home":
-            return (
+            content = (
                 <div>
                     <h1>PomoRPG</h1>
                     <p>The adventurer is itchin' to explore...</p>
@@ -223,7 +224,7 @@ function App() {
                         value={projectName}
                         onChange={(e) => setProjectName(e.target.value)}
                     />
-                    
+
                     <Button onClick={() => { setMode('focus'); start(); }}>Start Focus Session</Button>
                     <p>XP: {xp} | SP: {skillPointsAvailable}</p>
                     <hr />
@@ -231,7 +232,7 @@ function App() {
                         <h3>Character Level {character.level}</h3>
                         <p>Attack: {character.attack}</p>
                         <p>Speed: {character.speed}</p>
-                        
+
                     </div>
                     <hr />
                     <AdventureLog />
@@ -244,9 +245,9 @@ function App() {
                         onUnlockSkill={handleUnlockSkill}
                     />
                 </div>
-            );
-        case "break": 
-            return (
+            ); break;
+        case "break":
+            content = (
                 <div>
                     {!bossResult && <BossMeter progress={bossProgress} total={4} />}
                     <BreakSummary
@@ -262,36 +263,44 @@ function App() {
                         projectName={projectName}
                     />
                 </div>
-            );
+            ); break;
         case "focus":
-            return (
-            <div>
-                <h1>PomoRPG</h1>
-                <TimerDisplay time={formattedTime} />
-                <TimerControls
-                    isRunning={isRunning}
-                    start={() => { setMode('focus'); start() }}
-                    pause={pause}
-                    reset={() => { setMode('focus'); reset() }}
-                />
-                <hr />
-
-                <BossMeter progress={bossProgress} total={4} />
-                <p>While you work on {projectName.toLowerCase()}, the adventurer ventures into the woods...</p>
-                <hr />
-
-                <Button onClick={() => { setMode('home'); reset(); }}>End Session</Button>
-                <label>
-                    <input
-                        type="checkbox"
-                        checked={autoCycle}
-                        onChange={(e) => setAutoCycle(e.target.checked)}
+            content = (
+                <div>
+                    <h1>PomoRPG</h1>
+                    <TimerDisplay time={formattedTime} />
+                    <TimerControls
+                        isRunning={isRunning}
+                        start={() => { setMode('focus'); start() }}
+                        pause={pause}
+                        reset={() => { setMode('focus'); reset() }}
                     />
-                    Auto-start Next Session
-                </label>
-            </div>
-        )
+                    <hr />
+
+                    <BossMeter progress={bossProgress} total={4} />
+                    <p>While you work on {projectName.toLowerCase()}, the adventurer ventures into the woods...</p>
+                    <hr />
+
+                    <Button onClick={() => { setMode('home'); reset(); }}>End Session</Button>
+                    <label>
+                        <input
+                            type="checkbox"
+                            checked={autoCycle}
+                            onChange={(e) => setAutoCycle(e.target.checked)}
+                        />
+                        Auto-start Next Session
+                    </label>
+                </div>
+            ); break;
     }
+
+    return (
+        <div className="App">
+            {content}
+            <div id="footer">Made with love ❤️ - Jeane Ramos</div>
+        </div>
+    );
+       
 }
 
 export default App;
