@@ -17,9 +17,9 @@ export interface Skill {
 }
 
 export const BRANCHES: { id: SkillBranch; name: string; description: string }[] = [
-    { id: "consistency", name: "Consistency", description: "Build streaks and show up daily." },
-    { id: "focus", name: "Focus", description: "Boost rewards for entering flow state." },
-    { id: "sustainability", name: "Sustainability", description: "Build endurance and prevent burnout" },
+    { id: "consistency", name: "Consistency", description: "Build streaks and show up for yourself daily." },
+    { id: "focus", name: "Focus", description: "Boost rewards for achieving flow state." },
+    { id: "sustainability", name: "Sustainability", description: "Build endurance and prevent burnout." },
 ];
 
 // Cost to unlock additional branches after the first (which is free)
