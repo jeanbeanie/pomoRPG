@@ -88,11 +88,13 @@ hr {
 
 /*SKILL TREE*/
 
+
 .skill-tree {
     margin-top: 20px;
 }
 
 .skill {
+    
     border: 1px solid #ccc;
     padding: 8px;
     margin: 8px auto;
@@ -101,9 +103,58 @@ hr {
 }
 
     .skill.locked {
-        opacity: 0.4;
+        opacity: 0.5;
     }
 
     .skill.unlocked {
         border-color: limegreen;
     }
+
+/* BRANCH LAYOUT */
+
+.branches {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(220px, 1fr));
+    gap: 16px;
+    align-items: start;
+    justify-items: center;
+    margin-top: 16px;
+}
+
+/* Responsive: stack into fewer columns on small screens */
+@media (max-width: 900px) {
+    .branches {
+        grid-template-columns: repeat(2, minmax(220px, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .branches {
+        grid-template-columns: 1fr;
+    }
+}
+
+.branch {
+    width: 100%;
+    max-width: 320px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 12px;
+    background: #fafafa;
+}
+
+.branch-title {
+    margin: 0 0 4px 0;
+}
+
+.branch-desc {
+    margin: 0 0 10px 0;
+    opacity: 0.75;
+    font-size: 0.9rem;
+}
+
+/* Make skills fit inside the branch card nicely */
+.branch .skill {
+    width: auto; /* override fixed 200px */
+    margin: 10px 0; /* tighter vertical spacing inside a branch */
+}
