@@ -163,3 +163,21 @@ hr {
     width: auto; /* override fixed 200px */
     margin: 10px 0; /* tighter vertical spacing inside a branch */
 }
+
+/* Adventure Log */
+.adventure-log-header {
+    display: flex;
+    align-items: center; /* align vertically */
+    justify-content: center; /* keeps centered layout */
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.adventure-log-title {
+    margin: 0; /* important: h2 has default margins that mess with alignment */
+}
+
+.adventure-log-toggle {
+    padding: 6px 10px;
+    line-height: 1;
+}
