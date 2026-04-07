@@ -7,6 +7,9 @@ Set a timer dedicated to completing the project of your choosing without distrac
 While you work, your loyal adventurer will be battling monsters and completing quests in the background.
 Staying focused rewards you with experience points (XP), which can be used to level up skill trees.
 
+### Current Version: 0.1.1
+ - Initial release, includes core features and basic skill tree system.
+
 ## Features
 - Track streaks to help build consistency
 - XP System - gain experience points after completing pomodoro cycle
@@ -16,13 +19,10 @@ Staying focused rewards you with experience points (XP), which can be used to le
 	- Sustainability - build ewndurance and prevent burnout
 
 ## TODO
-- Collapsible adventure log
-- improve adventure log flavor text
+- Improve adventure log flavor text
 - Boss battle break summary 
-- Customizable skill trees let you tailor the system to your needs
 - Weekly bonuses to motivate long term progress towards your goals
 - Hardcore mode - strict 5 minute break time, no pausing, etc
-- animations, sound effects, etc
-- development log
+- Animations, sound effects, etc
 
 ### Every pomo cycle completed is a win.
