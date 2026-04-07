@@ -1,8 +1,8 @@
 // src/App.tsx
 /* Main application component for PomoRPG - a gamified Pomodoro timer with RPG elements. */
 
-import * as React from 'react';
 import { useState, useEffect } from 'react';
+import type { ReactNode } from 'react';
 /* UI component imports */
 import Button from './components/Button';
 import TimerDisplay from './components/TimerDisplay';
@@ -31,7 +31,7 @@ function App() {
     // todo move constants to separate config file
     const POMODORO_DURATION = 25 * 60; // 25 minutes in seconds
 
-    /* STATE */
+    /* STATE INIT */
     const [mode, setMode] = useState<'home' | 'focus' | 'break'>('home');
     const [autoCycle, setAutoCycle] = useState(false);
     const [projectName, setProjectName] = useState('');
@@ -39,7 +39,6 @@ function App() {
         const saved = localStorage.getItem('pomorpg_xp');
         return saved ? Number(saved) : 0;
     });
-
     const [unlockedBranches, setUnlockedBranches] = useState<SkillBranch[]>(() => {
         const saved = localStorage.getItem('pomorpg_unlocked_branches');
         return saved ? JSON.parse(saved) : [];
@@ -68,6 +67,12 @@ function App() {
         formattedTime
     } = useTimer(POMODORO_DURATION);
 
+    // when a pomodoro completes, calculate rewards and start break
+    function triggerBossFight() {
+        const result = simulateBossFight(character);
+        setBossResult(result);
+    }
+
      // persist character and xp to localStorage whenever they change
     useEffect(() => {
         localStorage.setItem('pomorpg_character', JSON.stringify(character));
@@ -81,15 +86,9 @@ function App() {
     useEffect(() => {
         localStorage.setItem('pomorpg_unlocked_skills', JSON.stringify(unlockedSkills));
     }, [unlockedSkills]);
-   
 
-    // when a pomodoro completes, calculate rewards and start break
-    function triggerBossFight() {
-        const result = simulateBossFight(character);
-        setBossResult(result);
-    }
-
-
+    // main effect: when a pomodoro session ends, calculate rewards, log the adventure, and start break
+    // TODO refactor into smaller effects or a reducer because this is getting icky
     useEffect(() => {
         if (secondsLeft === 0 && !isRunning && mode === 'focus') {
             function completePomodoro() {
@@ -102,8 +101,12 @@ function App() {
                     duration: POMODORO_DURATION
                 };
                 savePomoSession(session);
-                setXp((prev) => prev + reward);
-                console.log(`Pomodoro saved! Earned ${reward} XP for working on ${session.project}. Total XP: ${xp + reward}`);
+                setXp((prev) => {
+                    const nextXp = prev + reward;
+                    console.log(`Pomodoro saved! Earned ${reward} XP for working on ${session.project}. Total XP: ${nextXp}`);
+                    return nextXp;
+                });
+                
             }
             completePomodoro();
 
@@ -121,15 +124,14 @@ function App() {
             setUpgradeOptions(generateUpgradeOptions());
             console.log(`Run summary: ${run.enemiesDefeated} enemies defeated, ${run.goldEarned} gold earned, ${run.characterXpEarned} XP earned.`);
 
-            // TODO 5 minute break after each pomodoro
+            // TODO hardcore more : 5 minute break after each pomodoro
             setMode('break');
             //setTimeout(() => {
             //    start(5 * 60);
             //}, 5 * 60 * 1000);
-            // longer break every 4 pomodoros
+            // longer/unlimited break every 4 pomodoros
         }
     }, [secondsLeft, isRunning, mode, POMODORO_DURATION, character, unlockedSkills, projectName]);
-
 
     /* SKILL LOGIC */
 
@@ -206,7 +208,7 @@ function App() {
     const streak = getDailyStreak();
     const bestStreak = getBestDailyStreak();
     const bossProgress = getBossProgress(4);
-    let content: React.ReactNode;
+    let content: ReactNode;
    
     switch (mode) {
         case "home":
@@ -295,9 +297,9 @@ function App() {
     }
 
     return (
-        <div className="App">
+        <div>
             {content}
-            <div id="footer">Made with love ❤️ - Jeane Ramos</div>
+            <div className="footer">Made with love ❤️ - Jeane Ramos 2026</div>
         </div>
     );
        
