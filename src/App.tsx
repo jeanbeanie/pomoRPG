@@ -204,6 +204,13 @@ function App() {
         setUnlockedSkills((prev) => [...prev, skillId]);
     }
 
+    const handleResetData = () => {
+        if (window.confirm("Are you SURE you want to reset all data? This will permanently delete all your progress.")) {
+            localStorage.clear();
+            window.location.reload();
+        }
+    };
+
     /* RENDER */
     const streak = getDailyStreak();
     const bestStreak = getBestDailyStreak();
@@ -300,6 +307,8 @@ function App() {
         <div>
             {content}
             <div className="footer">Made with love ❤️ - Jeane Ramos 2026</div>
+            <hr />
+            <button className="btn" onClick={handleResetData}>Reset Data</button>
         </div>
     );
        
