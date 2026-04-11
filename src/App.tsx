@@ -29,12 +29,20 @@ import './App.css';
 
 function App() {
     // todo move constants to separate config file
-    const POMODORO_DURATION = 25 * 60; // 25 minutes in seconds
+    const FOCUS_DURATION = 25 * 60; // 25 minutes in seconds
+    const HARDCORE_BREAK_DURATION = 5 * 60; // 5 minutes in seconds
+    const CLEAN_BONUS_XP = 10; // XP bonus for completing a pomodoro without pausing
 
     /* STATE INIT */
     const [mode, setMode] = useState<'home' | 'focus' | 'break'>('home');
     const [autoCycle, setAutoCycle] = useState(false);
     const [projectName, setProjectName] = useState('');
+    const [hardcoreEnabled, setHardcoreEnabled] = useState(() => {
+        const saved = localStorage.getItem('pomorpg_hardcore');
+        return saved ? JSON.parse(saved) : false;
+    });
+    const [isCleanRun, setIsCleanRun] = useState(true); // whether the user paused during the pomodoro, for bonus XP calculation
+    const [breakLocked, setBreakLocked] = useState(false); 
     const [xp, setXp] = useState(() => {
         const saved = localStorage.getItem('pomorpg_xp');
         return saved ? Number(saved) : 0;
@@ -58,14 +66,17 @@ function App() {
     const [selectedUpgrade, setSelectedUpgrade] = useState<UpgradeOption | null>(null);
 
     /* TIMER HOOK */
+  
+    const focusTimer = useTimer(FOCUS_DURATION);
     const {
-        isRunning,
-        secondsLeft,
-        start,
-        pause,
-        reset,
-        formattedTime
-    } = useTimer(POMODORO_DURATION);
+      isRunning,
+      secondsLeft,
+      start,
+      pause,
+      reset,
+      formattedTime
+    } = focusTimer;
+    const breakTimer = useTimer(HARDCORE_BREAK_DURATION);
 
     // when a pomodoro completes, calculate rewards and start break
     function triggerBossFight() {
@@ -86,7 +97,9 @@ function App() {
     useEffect(() => {
         localStorage.setItem('pomorpg_unlocked_skills', JSON.stringify(unlockedSkills));
     }, [unlockedSkills]);
-
+    useEffect(() => {
+        localStorage.setItem('pomorpg_hardcore', JSON.stringify(hardcoreEnabled));
+    }, [hardcoreEnabled]);
     // main effect: when a pomodoro session ends, calculate rewards, log the adventure, and start break
     // TODO refactor into smaller effects or a reducer because this is getting icky
     useEffect(() => {
@@ -98,7 +111,7 @@ function App() {
                     project: projectName || "Untitled",
                     completedAt: Date.now(),
                     xpEarned: reward,
-                    duration: POMODORO_DURATION
+                    duration: FOCUS_DURATION
                 };
                 savePomoSession(session);
                 setXp((prev) => {
@@ -110,7 +123,7 @@ function App() {
             }
             completePomodoro();
 
-            const run = simulateRun(POMODORO_DURATION, character);
+            const run = simulateRun(FOCUS_DURATION, character);
             setLastRunSummary(run);
 
             const entry = generateAdventureEntry(projectName, run.enemiesDefeated);
@@ -131,7 +144,7 @@ function App() {
             //}, 5 * 60 * 1000);
             // longer/unlimited break every 4 pomodoros
         }
-    }, [secondsLeft, isRunning, mode, POMODORO_DURATION, character, unlockedSkills, projectName]);
+    }, [secondsLeft, isRunning, mode, FOCUS_DURATION, character, unlockedSkills, projectName]);
 
     /* SKILL LOGIC */
 
@@ -234,7 +247,14 @@ function App() {
                         onChange={(e) => setProjectName(e.target.value)}
                     />
 
-                    <Button onClick={() => { setMode('focus'); start(); }}>Start Focus Session</Button>
+                    <Button onClick={() => {
+                        setIsCleanRun(true);
+                        setMode('focus');
+                        reset();
+                        start();
+                    }}>
+                        Start Focus Session
+                    </Button>
                     <p>XP: {xp} | SP: {skillPointsAvailable}</p>
                     <hr />
                     <div>
