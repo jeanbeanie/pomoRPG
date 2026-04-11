@@ -301,8 +301,15 @@ function App() {
                     <TimerControls
                         isRunning={isRunning}
                         start={() => { setMode('focus'); start() }}
-                        pause={pause}
-                        reset={() => { setMode('focus'); reset() }}
+                        pause={() => {
+                            if(hardcoreEnabled) setIsCleanRun(false);
+                            pause();
+                        }}
+                        reset={() => {
+                            setMode('focus');
+                            if (hardcoreEnabled) setIsCleanRun(false);
+                            reset();
+                        }}
                     />
                     <hr />
 
@@ -310,7 +317,13 @@ function App() {
                     <p>While you work on {projectName.toLowerCase()}, the adventurer ventures into the woods...</p>
                     <hr />
 
-                    <Button onClick={() => { setMode('home'); reset(); }}>End Session</Button>
+                    <Button onClick={() => {
+                        if (hardcoreEnabled) setIsCleanRun(false);
+                        setMode('home');
+                        reset();
+                    }}>
+                        End Session
+                    </Button>
                     <label>
                         <input
                             type="checkbox"
