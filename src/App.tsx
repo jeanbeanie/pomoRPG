@@ -255,6 +255,16 @@ function App() {
                     }}>
                         Start Focus Session
                     </Button>
+                    <p>
+                        <label>
+                            <input
+                                type="checkbox"
+                                checked={hardcoreEnabled}
+                                onChange={(e) => setHardcoreEnabled(e.target.checked)}
+                            />
+                            Hardcore Mode (No pausing, 5 min break, extra XP)
+                        </label>
+                    </p>
                     <p>XP: {xp} | SP: {skillPointsAvailable}</p>
                     <hr />
                     <div>
@@ -314,7 +324,13 @@ function App() {
                     <hr />
 
                     <BossMeter progress={bossProgress} total={4} />
+                   
                     <p>While you work on {projectName.toLowerCase()}, the adventurer ventures into the woods...</p>
+                    {hardcoreEnabled && (
+                        <p style={{ opacity: 0.9 }}>
+                            Hardcore: ON • Clean Run: {isCleanRun ? "✅" : "❌"}
+                        </p>
+                    )}
                     <hr />
 
                     <Button onClick={() => {
