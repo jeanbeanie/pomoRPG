@@ -27,11 +27,13 @@ import { savePomoSession } from './utils/sessionStorage';
 import './App.css';
 
 
+// todo move constants to separate config file
+const FOCUS_DURATION = 1 * 60; // 25 minutes in seconds
+const HARDCORE_BREAK_DURATION = 5 * 60; // 5 minutes in seconds
+const CLEAN_BONUS_XP = 10; // XP bonus for completing a pomodoro without pausing
+
 function App() {
-    // todo move constants to separate config file
-    const FOCUS_DURATION = 25 * 60; // 25 minutes in seconds
-    const HARDCORE_BREAK_DURATION = 5 * 60; // 5 minutes in seconds
-    const CLEAN_BONUS_XP = 10; // XP bonus for completing a pomodoro without pausing
+   
 
     /* STATE INIT */
     const [mode, setMode] = useState<'home' | 'focus' | 'break'>('home');
@@ -64,6 +66,8 @@ function App() {
     const [bossResult, setBossResult] = useState < { boss:Boss, victory:boolean } | null>(null);
     const [upgradeOptions, setUpgradeOptions] = useState<UpgradeOption[]>([]);
     const [selectedUpgrade, setSelectedUpgrade] = useState<UpgradeOption | null>(null);
+    const [lastXpEarned, setLastXpEarned] = useState(0);
+    const [lastCleanBonusXp, setLastCleanBonusXp] = useState(0);
 
     /* TIMER HOOK */
   
@@ -105,7 +109,14 @@ function App() {
     useEffect(() => {
         if (secondsLeft === 0 && !isRunning && mode === 'focus') {
             function completePomodoro() {
-                const reward = getXpReward(unlockedSkills);
+                // calculate XP reward based on unlocked skills and whether it was a clean run (hardcore)
+                const baseXp = getXpReward(unlockedSkills);
+                const cleanBonusXp = hardcoreEnabled && isCleanRun ? CLEAN_BONUS_XP : 0;
+                const reward = baseXp + cleanBonusXp;
+
+                setLastXpEarned(reward);
+                setLastCleanBonusXp(cleanBonusXp);
+                console.log(`Pomodoro complete! Base XP: ${baseXp}, Clean Bonus: ${lastCleanBonusXp}, Total Reward: ${reward}`);
                 const session = {
                     id: crypto.randomUUID(),
                     project: projectName || "Untitled",
@@ -113,6 +124,7 @@ function App() {
                     xpEarned: reward,
                     duration: FOCUS_DURATION
                 };
+
                 savePomoSession(session);
                 setXp((prev) => {
                     const nextXp = prev + reward;
@@ -127,6 +139,10 @@ function App() {
             setLastRunSummary(run);
 
             const entry = generateAdventureEntry(projectName, run.enemiesDefeated);
+            // append bonus info to adventure log entry if it was a clean run in hardcore mode
+            if (hardcoreEnabled && isCleanRun) {
+                entry.text += ` Clean run! Bonus awarded (+${CLEAN_BONUS_XP} XP).`;
+            }
             saveAdventureEntry(entry);
 
             const count = incrementPomoCounter();
@@ -137,46 +153,19 @@ function App() {
             setUpgradeOptions(generateUpgradeOptions());
             console.log(`Run summary: ${run.enemiesDefeated} enemies defeated, ${run.goldEarned} gold earned, ${run.characterXpEarned} XP earned.`);
 
-            // TODO hardcore more : 5 minute break after each pomodoro
             setMode('break');
-            //setTimeout(() => {
-            //    start(5 * 60);
-            //}, 5 * 60 * 1000);
+            // lock break timer and begin 5 minute timer if hardcore mode is enabled
+            if (hardcoreEnabled) {
+                setBreakLocked(true);
+                breakTimer.reset();
+                breakTimer.start();
+            } else {
+                setBreakLocked(false);
+            }
             // longer/unlimited break every 4 pomodoros
         }
-    }, [secondsLeft, isRunning, mode, FOCUS_DURATION, character, unlockedSkills, projectName]);
+    }, [secondsLeft, isRunning, mode, character, unlockedSkills, projectName, hardcoreEnabled, isCleanRun, breakTimer, triggerBossFight]);
 
-    /* SKILL LOGIC */
-
-    const totalSkillPointsEarned = Math.floor(xp / 100);
-    const spSpentOnBranches = unlockedBranches.length <= 1 ? 0 : (unlockedBranches.length - 1) * BRANCH_UNLOCK_COST; // first branch is free
-    const spentOnSkills = unlockedSkills.reduce((sum, skillId) => {
-        const skill = skills.find(s => s.id === skillId);
-        return sum + (skill ? skill.cost : 0);
-    }, 0);
-    const skillPointsAvailable = totalSkillPointsEarned - spSpentOnBranches - spentOnSkills;
-
-    /* DISPLAY HANDLERS LOGIC */
-
-    const handleContinue = () => {
-        if (!selectedUpgrade) return;
-        applyUpgrade(selectedUpgrade);
-        const xpEarned = lastRunSummary?.characterXpEarned || 0;
-        setCharacter(prev => applyCharacterXp(prev, xpEarned));
-        setLastRunSummary(null);
-        setBossResult(null);
-        if (autoCycle) {
-            setMode('focus');
-            start()
-        } else {
-            setMode('home');
-        }
-    };
-
-    const handleUpgradeSelect = (option: UpgradeOption) => {
-        // highlight selected option in UI
-        setSelectedUpgrade(option);
-    }
 
     function applyUpgrade(option: UpgradeOption) {
         if (option.type === 'attack') {
@@ -190,6 +179,63 @@ function App() {
         if (option.type === 'accountXpBoost') {
             // Add to account XP multiplier state later  
         }
+    }
+
+    function finalizeBreakAndAdvance() {
+        // pick an upgrade if none selected
+        const upgrade = selectedUpgrade ?? upgradeOptions[0];
+        if (upgrade) applyUpgrade(upgrade);
+
+        const xpEarned = lastRunSummary?.characterXpEarned || 0;
+        setCharacter((prev) => applyCharacterXp(prev, xpEarned));
+
+        setLastRunSummary(null);
+        setBossResult(null);
+        setSelectedUpgrade(null);
+
+        if (autoCycle) {
+            setIsCleanRun(true);
+            setMode("focus");
+            focusTimer.reset();
+            focusTimer.start();
+        } else {
+            setMode("home");
+        }
+    }
+
+    useEffect(() => {
+        if (!hardcoreEnabled) return;
+        if (mode !== "break") return;
+
+        if (breakTimer.secondsLeft === 0 && !breakTimer.isRunning) {
+            setBreakLocked(false);
+            finalizeBreakAndAdvance();
+        }
+    }, [
+        hardcoreEnabled,
+        mode,
+        breakTimer.secondsLeft,
+        breakTimer.isRunning,
+    ]);
+
+    /* SKILL LOGIC */
+
+    const totalSkillPointsEarned = Math.floor(xp / 100);
+    const spSpentOnBranches = unlockedBranches.length <= 1 ? 0 : (unlockedBranches.length - 1) * BRANCH_UNLOCK_COST; // first branch is free
+    const spentOnSkills = unlockedSkills.reduce((sum, skillId) => {
+        const skill = skills.find(s => s.id === skillId);
+        return sum + (skill ? skill.cost : 0);
+    }, 0);
+    const skillPointsAvailable = totalSkillPointsEarned - spSpentOnBranches - spentOnSkills;
+
+
+    /* DISPLAY HANDLERS LOGIC */
+
+    const handleContinue = () => finalizeBreakAndAdvance();
+
+    const handleUpgradeSelect = (option: UpgradeOption) => {
+        // highlight selected option in UI
+        setSelectedUpgrade(option);
     }
 
     const handleUnlockBranch = (branch: SkillBranch) => {
@@ -289,12 +335,15 @@ function App() {
             content = (
                 <div>
                     {!bossResult && <BossMeter progress={bossProgress} total={4} />}
+                    <p>{hardcoreEnabled && `Break time remaining: ${breakTimer.formattedTime}`}</p>
+                    <p>Choose an upgrade before the timer ends (or one will be chosen for you!!)</p>
                     <BreakSummary
+                        breakLocked={breakLocked}
                         bossResult={bossResult ?? undefined}
                         enemiesDefeated={lastRunSummary?.enemiesDefeated}
                         goldEarned={lastRunSummary?.goldEarned}
                         characterXpEarned={lastRunSummary?.characterXpEarned}
-                        xpEarned={getXpReward(unlockedSkills)}
+                        xpEarned={lastXpEarned}
                         callback={handleContinue}
                         upgradeOptions={upgradeOptions}
                         selectedOption={selectedUpgrade ?? undefined}

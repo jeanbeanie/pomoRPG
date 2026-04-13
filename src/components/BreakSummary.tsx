@@ -15,6 +15,7 @@ interface BreakSummaryProps {
     onUpgradeSelect: (option: UpgradeOption) => void;
     selectedOption?: UpgradeOption;
     callback: () => void;
+    breakLocked?: boolean;
 }
 // todo - add flavor text prop
 
@@ -64,7 +65,7 @@ const BreakSummary: React.FC<BreakSummaryProps> = ({ bossResult, enemiesDefeated
                     </Button>
                 ))
             }
-            <hr/>
+            <hr />
             <Button onClick={() => { callback() }}>Continue</Button>
         </div>
     );
