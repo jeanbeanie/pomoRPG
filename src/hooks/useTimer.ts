@@ -1,3 +1,4 @@
+//src/hooks/useTimer.ts
 import { useState, useEffect } from 'react';
 
 export function useTimer(duration:number) {
