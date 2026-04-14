@@ -1,12 +1,16 @@
+// src/game/adventureLog.ts
+
 const STORAGE_KEY = "pomorpg_adventure_log";
 
 export type AdventureEntry = {
     id: string;
+    category: "run" | "boss";
     text: string;
     createdAt: number;
+    cleanRun?: boolean; // hardcore mode - no pausing/resetting allowed
+
 };
-// TODO handle boss fights, maybe add a "type" field to the entry to distinguish between normal and boss fights, 
-// and generate different text accordingly
+
 export function generateAdventureEntry(project: string, enemies: number): AdventureEntry {
     let text = "";
 
@@ -22,6 +26,18 @@ export function generateAdventureEntry(project: string, enemies: number): Advent
         id: crypto.randomUUID(),
         text,
         createdAt: Date.now(),
+        category: "run",
+    };
+}
+
+export function generateBossEntry(project: string, bossName: string, victory: boolean): AdventureEntry {
+    const text = `Focus was on ${project}, while your adventurer faced off against ${bossName} and ${victory ? 'emerged victorious!' : 'was defeated.'}`;
+
+    return {
+        id: crypto.randomUUID(),
+        text,
+        createdAt: Date.now(),
+        category: "boss",
     };
 }
 
