@@ -1,7 +1,7 @@
 // src/App.tsx
 /* Main application component for PomoRPG - a gamified Pomodoro timer with RPG elements. */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import type { ReactNode } from 'react';
 /* UI component imports */
 import Button from './components/Button';
@@ -82,11 +82,6 @@ function App() {
     } = focusTimer;
     const breakTimer = useTimer(HARDCORE_BREAK_DURATION);
 
-    // when a pomodoro completes, calculate rewards and start break
-    function triggerBossFight() {
-        const result = simulateBossFight(character);
-        setBossResult(result);
-    }
 
      // persist character and xp to localStorage whenever they change
     useEffect(() => {
@@ -116,7 +111,6 @@ function App() {
 
                 setLastXpEarned(reward);
                 setLastCleanBonusXp(cleanBonusXp);
-                console.log(`Pomodoro complete! Base XP: ${baseXp}, Clean Bonus: ${lastCleanBonusXp}, Total Reward: ${reward}`);
                 const session = {
                     id: crypto.randomUUID(),
                     project: projectName || "Untitled",
@@ -128,7 +122,7 @@ function App() {
                 savePomoSession(session);
                 setXp((prev) => {
                     const nextXp = prev + reward;
-                    console.log(`Pomodoro saved! Earned ${reward} XP for working on ${session.project}. Total XP: ${nextXp}`);
+                    console.log(`Pomodoro saved! Earned ${reward} XP for working on ${session.project}. Total XP: ${nextXp}, clean bonus: ${cleanBonusXp}`);
                     return nextXp;
                 });
                 
@@ -147,12 +141,11 @@ function App() {
 
             const count = incrementPomoCounter();
             if (count % 4 === 0) {
-                triggerBossFight();
+                setBossResult(simulateBossFight(character));
             }
 
             setUpgradeOptions(generateUpgradeOptions());
-            console.log(`Run summary: ${run.enemiesDefeated} enemies defeated, ${run.goldEarned} gold earned, ${run.characterXpEarned} XP earned.`);
-
+            console.log(`Run summary: ${run.enemiesDefeated} enemies defeated, ${run.goldEarned} gold earned, ${run.characterXpEarned} XP earned`);
             setMode('break');
             // lock break timer and begin 5 minute timer if hardcore mode is enabled
             if (hardcoreEnabled) {
@@ -164,7 +157,7 @@ function App() {
             }
             // longer/unlimited break every 4 pomodoros
         }
-    }, [secondsLeft, isRunning, mode, character, unlockedSkills, projectName, hardcoreEnabled, isCleanRun, breakTimer, triggerBossFight]);
+    }, [secondsLeft, isRunning, mode, character, unlockedSkills, projectName, hardcoreEnabled, isCleanRun]);
 
 
     function applyUpgrade(option: UpgradeOption) {
@@ -181,7 +174,10 @@ function App() {
         }
     }
 
-    function finalizeBreakAndAdvance() {
+    const finalizeBreakAndAdvance = useCallback(() => {
+        setBreakLocked(false);
+        breakTimer.reset();
+
         // pick an upgrade if none selected
         const upgrade = selectedUpgrade ?? upgradeOptions[0];
         if (upgrade) applyUpgrade(upgrade);
@@ -201,14 +197,13 @@ function App() {
         } else {
             setMode("home");
         }
-    }
+    }, [selectedUpgrade, upgradeOptions, lastRunSummary, autoCycle, focusTimer, breakTimer]);
 
     useEffect(() => {
         if (!hardcoreEnabled) return;
         if (mode !== "break") return;
 
         if (breakTimer.secondsLeft === 0 && !breakTimer.isRunning) {
-            setBreakLocked(false);
             finalizeBreakAndAdvance();
         }
     }, [
@@ -216,6 +211,7 @@ function App() {
         mode,
         breakTimer.secondsLeft,
         breakTimer.isRunning,
+        finalizeBreakAndAdvance
     ]);
 
     /* SKILL LOGIC */
@@ -335,7 +331,7 @@ function App() {
             content = (
                 <div>
                     {!bossResult && <BossMeter progress={bossProgress} total={4} />}
-                    <p>{hardcoreEnabled && `Break time remaining: ${breakTimer.formattedTime}`}</p>
+                    {hardcoreEnabled && <p>Break time remaining: {breakTimer.formattedTime}</p>}
                     <p>Choose an upgrade before the timer ends (or one will be chosen for you!!)</p>
                     <BreakSummary
                         breakLocked={breakLocked}
@@ -344,6 +340,7 @@ function App() {
                         goldEarned={lastRunSummary?.goldEarned}
                         characterXpEarned={lastRunSummary?.characterXpEarned}
                         xpEarned={lastXpEarned}
+                        cleanBonusXp={lastCleanBonusXp}
                         callback={handleContinue}
                         upgradeOptions={upgradeOptions}
                         selectedOption={selectedUpgrade ?? undefined}

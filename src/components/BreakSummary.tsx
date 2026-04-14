@@ -10,6 +10,7 @@ interface BreakSummaryProps {
     goldEarned?: number;
     characterXpEarned?: number;
     xpEarned?: number;
+    cleanBonusXp?: number;
     upgradeOptions: UpgradeOption[];
     projectName?: string;
     onUpgradeSelect: (option: UpgradeOption) => void;
