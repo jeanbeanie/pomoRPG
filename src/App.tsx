@@ -259,9 +259,21 @@ function App() {
         setUnlockedSkills((prev) => [...prev, skillId]);
     }
 
+    function resetPomoRpgStorage() {
+        const keysToRemove: string[] = [];
+
+        // only remove keys that start with "pomorpg_" to avoid clearing unrelated localStorage data
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && key.startsWith("pomorpg_")) keysToRemove.push(key);
+        }
+
+        keysToRemove.forEach((k) => localStorage.removeItem(k));
+    }
+
     const handleResetData = () => {
         if (window.confirm("Are you SURE you want to reset all data? This will permanently delete all your progress.")) {
-            localStorage.clear();
+            resetPomoRpgStorage();
             window.location.reload();
         }
     };
