@@ -20,7 +20,7 @@ export default function AdventureLog() {
                     onClick={() => setExpanded((prev) => !prev)}
                     disabled={entries.length <= 1}
                     aria-expanded={expanded}
-                    aria-aria-label={expanded ? "Collapse adventure log" : "Expand adventure log"}
+                    aria-label={expanded ? "Collapse adventure log" : "Expand adventure log"}
                 >
                     {expanded ? "▴" : "▾"}
                 </button>
