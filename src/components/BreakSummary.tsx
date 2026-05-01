@@ -21,12 +21,13 @@ interface BreakSummaryProps {
 // todo - add flavor text prop
 
 const BreakSummary: React.FC<BreakSummaryProps> = ({ bossResult, enemiesDefeated = 0, goldEarned = 0, xpEarned = 0, characterXpEarned = 0, projectName = "", callback, upgradeOptions, onUpgradeSelect, selectedOption = null }) => {
+    console.log("BreakSummary Props:", { bossResult, enemiesDefeated, goldEarned, xpEarned, characterXpEarned, projectName, upgradeOptions, selectedOption });
     return bossResult ? (
         <div>
             <h2>Boss Battle : {bossResult.boss.name}</h2>
             {
                 bossResult.victory ?
-                    (<p>Yay</p>) : (<p>Nooo</p>)
+                    (<p>Victory! { bossResult.boss.name } staggers back into the darkness!</p>) : (<p>Defeat! { bossResult.boss.name } remains undefeated!</p>)
             }
             <b>Choose an Upgrade:</b>
             {
