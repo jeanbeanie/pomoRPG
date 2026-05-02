@@ -5,70 +5,86 @@ import Button from './Button';
 import { type Boss } from '../game/bosses';
 
 interface BreakSummaryProps {
-    bossResult?: { boss: Boss, victory: boolean };
+    bossResult?: { boss: Boss; victory: boolean };
+
     enemiesDefeated?: number;
     goldEarned?: number;
     characterXpEarned?: number;
+
     xpEarned?: number;
     cleanBonusXp?: number;
+
     upgradeOptions: UpgradeOption[];
     projectName?: string;
+
     onUpgradeSelect: (option: UpgradeOption) => void;
     selectedOption?: UpgradeOption;
+    // todo: improve callback name, maybe onContinue or something
     callback: () => void;
     breakLocked?: boolean;
 }
-// todo - add flavor text prop
 
-const BreakSummary: React.FC<BreakSummaryProps> = ({ bossResult, enemiesDefeated = 0, goldEarned = 0, xpEarned = 0, characterXpEarned = 0, projectName = "", callback, upgradeOptions, onUpgradeSelect, selectedOption = null }) => {
-    console.log("BreakSummary Props:", { bossResult, enemiesDefeated, goldEarned, xpEarned, characterXpEarned, projectName, upgradeOptions, selectedOption });
-    return bossResult ? (
-        <div>
-            <h2>Boss Battle : {bossResult.boss.name}</h2>
-            {
-                bossResult.victory ?
-                    (<p>Victory! { bossResult.boss.name } staggers back into the darkness!</p>) : (<p>Defeat! { bossResult.boss.name } remains undefeated!</p>)
-            }
-            <b>Choose an Upgrade:</b>
-            {
-                upgradeOptions.map((option, index) => (
-                    <Button
-                        key={index}
-                        className={selectedOption === option ? "selected" : ""}
-                        onClick={() => { onUpgradeSelect(option) }}
-                    >
-                        {option.type}
-                    </Button>
-                ))
-            }
-            <Button onClick={() => { callback() }}>Continue</Button>
-        </div>
-        ) : (
+const BreakSummary: React.FC<BreakSummaryProps> = ({
+    bossResult,
+    enemiesDefeated = 0,
+    goldEarned = 0,
+    xpEarned = 0,
+    cleanBonusXp = 0,
+    characterXpEarned = 0,
+    projectName = "",
+    callback,
+    upgradeOptions,
+    onUpgradeSelect,
+    selectedOption = null,
+    breakLocked = false,
+}) => {
+    return (
         <div id="breakSummary">
             <h2>{projectName} Focus Session Complete!</h2>
             <hr />
+
             <p>XP Earned: +{xpEarned}</p>
-            
+            {cleanBonusXp > 0 && (
+                <small style={{ opacity: 0.85 }}>Clean run bonus: +{cleanBonusXp} XP</small>
+            )}
+
             <p>The adventurer successfully explored the woods.</p>
             <b>Character Run:</b>
             <p>Enemies Defeated: {enemiesDefeated}</p>
             <p>Gold Earned: {goldEarned}</p>
             <p>Character XP Earned: {characterXpEarned}</p>
-            
-            <b>Choose an Upgrade:</b>
-            {
-                upgradeOptions.map((option, index) => (
-                    <Button
-                        key={index}
-                        className={ selectedOption === option ? "selected" : ""}
-                        onClick={() => { onUpgradeSelect(option) }}
-                    >
-                        {option.type}
-                    </Button>
-                ))
-            }
+
+            {bossResult && (
+                <>
+                    <hr />
+                    <h3>Boss Ambush: {bossResult.boss.name}</h3>
+                    {bossResult.victory ? (
+                        <p>Victory! {bossResult.boss.name} staggers back into the darkness!</p>
+                    ) : (
+                        <p>Defeat! {bossResult.boss.name} remains undefeated!</p>
+                    )}
+                    <small style={{ opacity: 0.85 }}>
+                        (Boss fights are bonus-only for now.)
+                    </small>
+                </>
+            )}
+
             <hr />
-            <Button onClick={() => { callback() }}>Continue</Button>
+            <b>Choose an Upgrade:</b>
+            {upgradeOptions.map((option, index) => (
+                <Button
+                    key={index}
+                    className={selectedOption === option ? "selected" : ""}
+                    onClick={() => onUpgradeSelect(option)}
+                >
+                    {option.type}
+                </Button>
+            ))}
+
+            <hr />
+            <Button onClick={callback} disabled={breakLocked}>
+                Continue
+            </Button>
         </div>
     );
 };

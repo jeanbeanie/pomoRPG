@@ -344,7 +344,7 @@ function App() {
                 <div>
                     {!bossResult && <BossMeter progress={bossProgress} total={4} />}
                     {hardcoreEnabled && <p>Break time remaining: {breakTimer.formattedTime}</p>}
-                    <p>Choose an upgrade before the timer ends (or one will be chosen for you!!)</p>
+                    <p>You should probably choose an upgrade before the timer ends.</p>
                     <BreakSummary
                         breakLocked={breakLocked}
                         bossResult={bossResult ?? undefined}
