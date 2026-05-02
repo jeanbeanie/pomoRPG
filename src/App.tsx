@@ -342,7 +342,7 @@ function App() {
         case "break":
             content = (
                 <div>
-                    {!bossResult && <BossMeter progress={bossProgress} total={4} />}
+                    {<BossMeter progress={bossProgress} total={4} />}
                     {hardcoreEnabled && <p>Break time remaining: {breakTimer.formattedTime}</p>}
                     <p>You should probably choose an upgrade before the timer ends.</p>
                     <BreakSummary
