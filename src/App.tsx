@@ -19,7 +19,7 @@ import { getDailyStreak, getBestDailyStreak } from './game/streaks';
 import { getXpReward } from './game/gameLogic';
 import { applyCharacterXp, createNewCharacter, type Character } from './game/character';
 import { type runResults, simulateRun } from './game/simulateRun';
-import { type Boss, type BossFightResult, incrementPomoCounter, simulateBossFight, getBossProgress } from './game/bosses';
+import { type BossFightResult, incrementPomoCounter, simulateBossFight, getBossProgress } from './game/bosses';
 import { generateUpgradeOptions, type UpgradeOption } from './game/upgrades';
 import { generateAdventureEntry, saveAdventureEntry } from './game/adventureLog';
 import { savePomoSession } from './utils/sessionStorage';
@@ -105,7 +105,7 @@ function App() {
         if (secondsLeft === 0 && !isRunning && mode === 'focus') {
             function completePomodoro() {
                 // calculate XP reward based on unlocked skills and whether it was a clean run (hardcore)
-                const baseXp = getXpReward(unlockedSkills);
+                const baseXp = getXpReward();
                 const cleanBonusXp = hardcoreEnabled && isCleanRun ? CLEAN_BONUS_XP : 0;
                 const reward = baseXp + cleanBonusXp;
 
