@@ -2,7 +2,7 @@
 
 import { type UpgradeOption } from '../game/upgrades';
 import Button from './Button';
-import { type Boss, type BossFightResult } from '../game/bosses';
+import { type BossFightResult } from '../game/bosses';
 
 interface BreakSummaryProps {
     bossResult?: BossFightResult;
