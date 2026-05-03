@@ -62,6 +62,10 @@ const BreakSummary: React.FC<BreakSummaryProps> = ({
                         You strike for <b>{bossResult.playerDamage.toFixed(2)}</b> •{" "}
                         {bossResult.boss.name} strikes for <b>{bossResult.bossDamage.toFixed(2)}</b>
                     </p>
+                    <p>
+                        Clash: <b>{bossResult.playerDamage.toFixed(2)}</b> vs{" "}
+                        <b>{bossResult.bossDamage.toFixed(2)}</b>
+                    </p>
 
                     {bossResult.victory ? (
                         <p>Victory! {bossResult.boss.name} staggers back into the darkness!</p>
@@ -87,6 +91,7 @@ const BreakSummary: React.FC<BreakSummaryProps> = ({
             <Button onClick={callback} disabled={breakLocked}>
                 Continue
             </Button>
+            {breakLocked && <small style={{ opacity: 0.8 }}>Break in progress…</small>}
         </div>
     );
 };
