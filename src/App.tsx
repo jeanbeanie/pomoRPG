@@ -19,7 +19,7 @@ import { getDailyStreak, getBestDailyStreak } from './game/streaks';
 import { getXpReward } from './game/gameLogic';
 import { applyCharacterXp, createNewCharacter, type Character } from './game/character';
 import { type runResults, simulateRun } from './game/simulateRun';
-import { type Boss, incrementPomoCounter, simulateBossFight, getBossProgress } from './game/bosses';
+import { type Boss, type BossFightResult, incrementPomoCounter, simulateBossFight, getBossProgress } from './game/bosses';
 import { generateUpgradeOptions, type UpgradeOption } from './game/upgrades';
 import { generateAdventureEntry, saveAdventureEntry } from './game/adventureLog';
 import { savePomoSession } from './utils/sessionStorage';
@@ -63,7 +63,7 @@ function App() {
         return saved ? JSON.parse(saved) : createNewCharacter();
     });
     const [lastRunSummary, setLastRunSummary] = useState<runResults | null>(null);
-    const [bossResult, setBossResult] = useState < { boss:Boss, victory:boolean } | null>(null);
+    const [bossResult, setBossResult] = useState<BossFightResult | null>(null);
     const [upgradeOptions, setUpgradeOptions] = useState<UpgradeOption[]>([]);
     const [selectedUpgrade, setSelectedUpgrade] = useState<UpgradeOption | null>(null);
     const [lastXpEarned, setLastXpEarned] = useState(0);

@@ -2,10 +2,10 @@
 
 import { type UpgradeOption } from '../game/upgrades';
 import Button from './Button';
-import { type Boss } from '../game/bosses';
+import { type Boss, type BossFightResult } from '../game/bosses';
 
 interface BreakSummaryProps {
-    bossResult?: { boss: Boss; victory: boolean };
+    bossResult?: BossFightResult;
 
     enemiesDefeated?: number;
     goldEarned?: number;
@@ -58,14 +58,16 @@ const BreakSummary: React.FC<BreakSummaryProps> = ({
                 <>
                     <hr />
                     <h3>Boss Ambush: {bossResult.boss.name}</h3>
+                    <p>
+                        You strike for <b>{bossResult.playerDamage.toFixed(2)}</b> •{" "}
+                        {bossResult.boss.name} strikes for <b>{bossResult.bossDamage.toFixed(2)}</b>
+                    </p>
+
                     {bossResult.victory ? (
                         <p>Victory! {bossResult.boss.name} staggers back into the darkness!</p>
                     ) : (
                         <p>Defeat! {bossResult.boss.name} remains undefeated!</p>
                     )}
-                    <small style={{ opacity: 0.85 }}>
-                        (Boss fights are bonus-only for now.)
-                    </small>
                 </>
             )}
 
