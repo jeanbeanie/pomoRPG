@@ -31,15 +31,24 @@ export function incrementPomoCounter(): number {
     return newCount;
 }
 
-export function simulateBossFight(character: Character) {
+export type BossFightResult = {
+    boss: Boss;
+    victory: boolean;
+    playerDamage: number;
+    bossDamage: number;
+};
+
+export function simulateBossFight(character: Character):BossFightResult {
     // For now, just compare attack values with some randomness
     const boss = bosses[Math.floor(Math.random() * bosses.length)];
     const playerDamage = character.attack + Math.random() * 2;
     const bossDamage = boss.attack + Math.random() * 2;
+
     const victory = playerDamage >= bossDamage;
-    console.log(`Boss fight against ${boss.name}: Player damage = ${playerDamage.toFixed(2)}, Boss damage = ${bossDamage.toFixed(2)}. Victory: ${victory}`);
     return {
         boss,
-        victory
+        victory,
+        playerDamage,
+        bossDamage,
     }
 }
