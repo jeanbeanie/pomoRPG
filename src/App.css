@@ -10,6 +10,57 @@
     text-align: center;
 }
 
+/* Home screen layout */
+.panel {
+    width: min(740px, 92vw);
+    margin: 0 auto;
+    padding: 18px 18px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--panel);
+    box-shadow: var(--shadow);
+}
+
+.panel-title {
+    margin: 0 0 4px 0;
+}
+
+.panel-subtitle {
+    margin: 0 0 14px 0;
+    color: var(--muted);
+}
+
+.row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.stats {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 10px 0 0 0;
+}
+
+.stats-pill {
+    padding: 6px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--panel-2);
+    color: var(--text);
+    font-size: 0.95rem;
+}
+
+.section {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px dotted var(--border);
+}
+
 .footer {
     font-size: 0.8rem;
     opacity: 0.7;
@@ -165,7 +216,6 @@ input[type="text"]:focus {
 }
 
 .branch {
-    width: 100%;
     max-width: 320px;
     border: 1px solid var(--border);
     border-radius: 12px;

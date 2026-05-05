@@ -125,7 +125,7 @@ function App() {
         if (!(secondsLeft === 0 && !isRunning && mode === "focus")) return;
 
         // calculate XP reward based on unlocked skills and whether it was a clean run (hardcore)
-        const baseXp = getXpReward(unlockedSkills); // IMPORTANT: pass unlockedSkills back in
+        const baseXp = getXpReward(); // IMPORTANT: pass unlockedSkills back in
         const cleanBonusXp = hardcoreEnabled && isCleanRun ? CLEAN_BONUS_XP : 0;
         const reward = baseXp + cleanBonusXp;
 
@@ -262,94 +262,101 @@ function App() {
     switch (mode) {
         case "home":
             content = (
-                <div>
-                    <h1>PomoRPG</h1>
-                    <p>The adventurer is itchin' to explore...</p>
+                <div className="panel">
+                    <h1 className="panel-title">PomoRPG</h1>
+                    <p className="panel-subtitle">The adventurer is itchin' to explore...</p>
 
-                    <div className="streak">
-                        <p>🔥 {streak} day streak</p>
-                        <p style={{ opacity: 0.85 }}>🏆 Best: {bestStreak}</p>
+                    <div className="stats">
+                        <span className="stats-pill">🔥 {streak} day streak</span>
+                        <span className="stats-pill">🏆 Best: {bestStreak}</span>
+                        <span className="stats-pill">XP: {xp}</span>
+                        <span className="stats-pill">SP: {skillPointsAvailable}</span>
                     </div>
 
-                    <input
-                        type="text"
-                        placeholder="What are you working on?"
-                        value={projectName}
-                        onChange={(e) => setProjectName(e.target.value)}
-                    />
+                    <div className="section">
+                        <input
+                            type="text"
+                            placeholder="What are you working on?"
+                            value={projectName}
+                            onChange={(e) => setProjectName(e.target.value)}
+                        />
 
-                    <Button
-                        onClick={() => {
-                            setIsCleanRun(true);
-                            setMode("focus");
-                            reset();
-                            start();
-                        }}
-                    >
-                        Start Focus Session
-                    </Button>
+                        <div style={{ marginTop: 10 }}>
+                            <Button
+                                onClick={() => {
+                                    setIsCleanRun(true);
+                                    setMode("focus");
+                                    reset();
+                                    start();
+                                }}
+                            >
+                                Start Focus Session
+                            </Button>
+                        </div>
 
-                    <div style={{ marginTop: 10 }}>
-                        <label style={{ display: "block" }}>
-                            <input
-                                type="checkbox"
-                                checked={hardcoreEnabled}
-                                onChange={(e) => setHardcoreEnabled(e.target.checked)}
-                            />
-                            Hardcore Mode (No pausing, 5 min break, extra XP)
-                        </label>
+                        <div className="row" style={{ marginTop: 10 }}>
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    checked={hardcoreEnabled}
+                                    onChange={(e) => setHardcoreEnabled(e.target.checked)}
+                                />
+                                Hardcore
+                            </label>
 
-                        <label style={{ display: "block", marginTop: 8 }}>
-                            <input
-                                type="checkbox"
-                                checked={theme === "dark"}
-                                onChange={(e) => setTheme(e.target.checked ? "dark" : "light")}
-                            />
-                            Dark mode
-                        </label>
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    checked={theme === "dark"}
+                                    onChange={(e) => setTheme(e.target.checked ? "dark" : "light")}
+                                />
+                                Dark mode
+                            </label>
+                        </div>
                     </div>
 
-                    <p>XP: {xp} | SP: {skillPointsAvailable}</p>
-
-                    <hr />
-
-                    <div>
-                        <h3>Character Level {character.level}</h3>
-                        <p>Attack: {character.attack}</p>
-                        <p>Speed: {character.speed}</p>
+                    <div className="section">
+                        <h3>Character</h3>
+                        <div className="row">
+                            <span className="stats-pill">Level {character.level}</span>
+                            <span className="stats-pill">⚔️ Attack {character.attack}</span>
+                            <span className="stats-pill">💨 Speed {character.speed}</span>
+                        </div>
                     </div>
 
-                    <hr />
-                    <AdventureLog />
-                    <hr />
+                    <div className="section">
+                        <AdventureLog />
+                    </div>
 
-                    <SkillTree
-                        skillPoints={skillPointsAvailable}
-                        unlockedBranches={unlockedBranches}
-                        unlockedSkillIds={unlockedSkills}
-                        onUnlockBranch={(branch) => {
-                            if (unlockedBranches.includes(branch)) return;
-                            const isFirstBranch = unlockedBranches.length === 0;
-                            const cost = isFirstBranch ? 0 : BRANCH_UNLOCK_COST;
-                            if (skillPointsAvailable < cost) return;
-                            setUnlockedBranches((prev) => [...prev, branch]);
-                        }}
-                        onUnlockSkill={(skillId) => {
-                            if (unlockedSkills.includes(skillId)) return;
+                    <div className="section">
+                        <SkillTree
+                            skillPoints={skillPointsAvailable}
+                            unlockedBranches={unlockedBranches}
+                            unlockedSkillIds={unlockedSkills}
+                            onUnlockBranch={(branch) => {
+                                if (unlockedBranches.includes(branch)) return;
+                                const isFirstBranch = unlockedBranches.length === 0;
+                                const cost = isFirstBranch ? 0 : BRANCH_UNLOCK_COST;
+                                if (skillPointsAvailable < cost) return;
+                                setUnlockedBranches((prev) => [...prev, branch]);
+                            }}
+                            onUnlockSkill={(skillId) => {
+                                if (unlockedSkills.includes(skillId)) return;
 
-                            const skill = skills.find((s) => s.id === skillId);
-                            if (!skill) return;
+                                const skill = skills.find((s) => s.id === skillId);
+                                if (!skill) return;
 
-                            if (!unlockedBranches.includes(skill.branch)) return;
+                                if (!unlockedBranches.includes(skill.branch)) return;
 
-                            const prerequisitesMet = (skill.requires ?? []).every((req) => unlockedSkills.includes(req));
-                            if (!prerequisitesMet) return;
+                                const prerequisitesMet = (skill.requires ?? []).every((req) => unlockedSkills.includes(req));
+                                if (!prerequisitesMet) return;
 
-                            if (skillPointsAvailable < skill.cost) return;
+                                if (skillPointsAvailable < skill.cost) return;
 
-                            setUnlockedSkills((prev) => [...prev, skillId]);
-                        }}
-                    />
+                                setUnlockedSkills((prev) => [...prev, skillId]);
+                            }}
+                        />
+                    </div>
                 </div>
             );
             break;
@@ -438,7 +445,7 @@ function App() {
     return (
         <div className="app">
             {content}
-            <div className="footer">Made with love - Jeane Ramos 2026</div>
+            <div className="footer">Made with love {theme === "dark" ? "💚" : "❤️"} - Jeane Ramos 2026</div>
             <hr />
             <button className="btn" onClick={handleResetData}>
                 Reset Data
