@@ -49,7 +49,7 @@ const BreakSummary: React.FC<BreakSummaryProps> = ({
             )}
 
             <p>The adventurer successfully explored the woods.</p>
-            <b>Character Run:</b>
+            <b>Run Details:</b>
             <p>Enemies Defeated: {enemiesDefeated}</p>
             <p>Gold Earned: {goldEarned}</p>
             <p>Character XP Earned: {characterXpEarned}</p>

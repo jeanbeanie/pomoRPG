@@ -1,23 +1,15 @@
-body {
-    margin: 0;
-    font-family: sans-serif;
+/* App-level styles (theme colors come from src/index.css CSS variables) */
+
+#root {
+    min-height: 100vh;
+    padding: 24px 0;
+    display: block;
 }
 
-
-div {
+.app {
     text-align: center;
 }
 
-#root {
-    display: flex;
-    height: 100vh;
-    min-height: fit-content;
-    margin: 3rem 0;
-    /* center content vertically */
-    justify-content: center;
-    /* center content horizontally */
-    align-items: center;
-}
 .footer {
     font-size: 0.8rem;
     opacity: 0.7;
@@ -25,41 +17,76 @@ div {
 }
 
 hr {
-    border: 1px dotted lightgrey;
+    border: 1px dotted var(--border);
     margin: 2rem auto;
 }
 
+/* Buttons */
 .btn {
     margin: 6px;
-    padding: 8px 16px;
+    padding: 10px 16px;
     font-size: 1rem;
-    border-radius: 6px;
-    border: none;
+    border-radius: 10px;
     cursor: pointer;
-    border: 1px solid lightgrey;
+    border: 1px solid var(--border);
+    background: var(--panel-2);
+    color: var(--text);
+    transition: background 0.2s ease, border-color 0.2s ease, transform 0.05s ease;
+}
+
+.btn:hover:not(:disabled) {
+    border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+    background: color-mix(in srgb, var(--accent) 15%, var(--panel-2));
+}
+
+.btn:active:not(:disabled) {
+    transform: translateY(1px);
 }
 
 .btn:disabled {
-    background-color: #ccc;
+    opacity: 0.55;
     cursor: not-allowed;
 }
 
+/* Selection highlight */
 .selected {
-    font-weight: bold;
-    background-color: limegreen;
+    font-weight: 700;
+    border-color: color-mix(in srgb, var(--accent-2) 55%, transparent);
+    background: color-mix(in srgb, var(--accent-2) 18%, var(--panel-2));
 }
 
+/* Inputs */
+input[type="text"] {
+    width: min(520px, 90vw);
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--panel-2);
+    color: var(--text);
+    outline: none;
+}
+
+input[type="text"]::placeholder {
+    color: color-mix(in srgb, var(--text) 40%, transparent);
+}
+
+input[type="text"]:focus {
+    border-color: color-mix(in srgb, var(--accent) 70%, transparent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
+/* Timer */
 .timer {
     font-size: 4rem;
     margin: 20px 0;
 }
 
-/*XP BAR*/
-
+/* XP BAR */
 .xp-bar-container {
     width: 300px;
     height: 25px;
-    background-color: #eee;
+    background: var(--panel);
+    border: 1px solid var(--border);
     margin: 10px auto;
     border-radius: 10px;
     overflow: hidden;
@@ -68,13 +95,12 @@ hr {
 
 .xp-bar-fill-area {
     height: 100%;
-    background-color: limegreen;
+    background-color: var(--accent-2);
     transition: width 0.3s ease;
 }
 
 .xp-bar-text-area {
     position: absolute;
-    /* must match container width and height */
     width: 300px;
     height: 25px;
     top: 50%;
@@ -84,39 +110,38 @@ hr {
     justify-content: center;
     font-size: 0.8rem;
     font-weight: bold;
+    color: var(--text);
     transform: translate(-50%, -50%);
 }
 
+/* Boss meter */
 .boss-meter {
     font-size: 2rem;
 }
 
-/*SKILL TREE*/
-
-
+/* SKILL TREE */
 .skill-tree {
     margin-top: 20px;
 }
 
 .skill {
-    
-    border: 1px solid #ccc;
+    border: 1px solid var(--border);
     padding: 8px;
     margin: 8px auto;
     width: 200px;
     border-radius: 6px;
+    background: var(--panel);
 }
 
-    .skill.locked {
-        opacity: 0.5;
-    }
+.skill.locked {
+    opacity: 0.5;
+}
 
-    .skill.unlocked {
-        border-color: limegreen;
-    }
+.skill.unlocked {
+    border-color: color-mix(in srgb, var(--accent-2) 60%, var(--border));
+}
 
 /* BRANCH LAYOUT */
-
 .branches {
     display: grid;
     grid-template-columns: repeat(3, minmax(220px, 1fr));
@@ -142,10 +167,10 @@ hr {
 .branch {
     width: 100%;
     max-width: 320px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--border);
     border-radius: 12px;
     padding: 12px;
-    background: #fafafa;
+    background: var(--panel);
 }
 
 .branch-title {
@@ -167,14 +192,14 @@ hr {
 /* Adventure Log */
 .adventure-log-header {
     display: flex;
-    align-items: center; /* align vertically */
-    justify-content: center; /* keeps centered layout */
+    align-items: center;
+    justify-content: center;
     gap: 6px;
     margin-bottom: 12px;
 }
 
 .adventure-log-title {
-    margin: 0; /* important: h2 has default margins that mess with alignment */
+    margin: 0;
 }
 
 .adventure-log-toggle {

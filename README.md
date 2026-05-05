@@ -6,7 +6,7 @@
 
 PomoRPG is a gamified pomodoro productivity tool inspired by Role Playing Games (RPGs). Set a timer dedicated to completing tasks without distraction while your loyal adventurer battles monsters and completes quests in the background. Staying focused rewards you with experience points (XP) to level up skill trees aligned with your personal growth goals.
 
-**Current Version:** 0.1.3
+**Current Version:** 0.5.0
 
 ## Features
 
@@ -16,7 +16,7 @@ PomoRPG is a gamified pomodoro productivity tool inspired by Role Playing Games 
 - **Skill Trees** - Three specialized branches for personal development:
   - **Consistency** - Build streaks and show up for yourself daily
   - **Focus** - Achieve and maintain flow state
-  - **Sustainability** - Build endurance and 			prevent burnout
+  - **Sustainability** - Build endurance and prevent burnout
 - **Boss Battles** - Every 4 pomodoro cycles triggers special encounters with bonus rewards
 - **Streak Tracking** - Monitor and maintain daily consistency
 - **Adventure Log** - Review your progress and achievements
