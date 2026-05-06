@@ -125,7 +125,7 @@ function App() {
         if (!(secondsLeft === 0 && !isRunning && mode === "focus")) return;
 
         // calculate XP reward based on unlocked skills and whether it was a clean run (hardcore)
-        const baseXp = getXpReward(); // IMPORTANT: pass unlockedSkills back in
+        const baseXp = getXpReward();
         const cleanBonusXp = hardcoreEnabled && isCleanRun ? CLEAN_BONUS_XP : 0;
         const reward = baseXp + cleanBonusXp;
 
@@ -174,7 +174,6 @@ function App() {
         isRunning,
         mode,
         character,
-        unlockedSkills,
         projectName,
         hardcoreEnabled,
         isCleanRun,
