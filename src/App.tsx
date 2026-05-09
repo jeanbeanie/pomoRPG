@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import type { ReactNode } from "react";
+import { loadSave, writeSave, resetSave, type Theme } from "./utils/storage";
 
 /* UI component imports */
 import Button from "./components/Button";
@@ -17,7 +18,7 @@ import { useTimer } from "./hooks/useTimer";
 import { type SkillBranch, BRANCH_UNLOCK_COST, skills } from "./data/skills";
 import { getDailyStreak, getBestDailyStreak } from "./game/streaks";
 import { getXpReward } from "./game/gameLogic";
-import { applyCharacterXp, createNewCharacter, type Character } from "./game/character";
+import { applyCharacterXp, type Character } from "./game/character";
 import { type runResults, simulateRun } from "./game/simulateRun";
 import {
     type BossFightResult,
@@ -33,51 +34,26 @@ import { savePomoSession } from "./utils/sessionStorage";
 import "./App.css";
 
 // todo move constants to separate config file
-const FOCUS_DURATION = 1 * 60; // 25 minutes in seconds
+const FOCUS_DURATION = 25 * 60; // 25 minutes in seconds
 const HARDCORE_BREAK_DURATION = 5 * 60; // 5 minutes in seconds
 const CLEAN_BONUS_XP = 10; // XP bonus for completing a pomodoro without pausing
 
-type Theme = "dark" | "light";
-const THEME_KEY = "pomorpg_theme";
-
 function App() {
+    // Load initial save data once on app start
+    const [initialSave] = useState(loadSave());
     /* STATE INIT */
-    const [theme, setTheme] = useState<Theme>(() => {
-        const saved = localStorage.getItem(THEME_KEY);
-        return saved === "light" || saved === "dark" ? saved : "dark";
-    });
+    const [theme, setTheme] = useState<Theme>(initialSave.theme);
+    const [hardcoreEnabled, setHardcoreEnabled] = useState<boolean>(initialSave.hardcoreEnabled);
+    const [xp, setXp] = useState(initialSave.xp);
+    const [unlockedBranches, setUnlockedBranches] = useState<SkillBranch[]>(initialSave.unlockedBranches);
+    const [unlockedSkills, setUnlockedSkills] = useState<string[]>(initialSave.unlockedSkills);
+    const [character, setCharacter] = useState<Character>(initialSave.character);
 
     const [mode, setMode] = useState<"home" | "focus" | "break">("home");
     const [autoCycle, setAutoCycle] = useState(false);
     const [projectName, setProjectName] = useState("");
-
-    const [hardcoreEnabled, setHardcoreEnabled] = useState(() => {
-        const saved = localStorage.getItem("pomorpg_hardcore");
-        return saved ? JSON.parse(saved) : false;
-    });
-
     const [isCleanRun, setIsCleanRun] = useState(true);
     const [breakLocked, setBreakLocked] = useState(false);
-
-    const [xp, setXp] = useState(() => {
-        const saved = localStorage.getItem("pomorpg_xp");
-        return saved ? Number(saved) : 0;
-    });
-
-    const [unlockedBranches, setUnlockedBranches] = useState<SkillBranch[]>(() => {
-        const saved = localStorage.getItem("pomorpg_unlocked_branches");
-        return saved ? JSON.parse(saved) : [];
-    });
-
-    const [unlockedSkills, setUnlockedSkills] = useState<string[]>(() => {
-        const saved = localStorage.getItem("pomorpg_unlocked_skills");
-        return saved ? JSON.parse(saved) : [];
-    });
-
-    const [character, setCharacter] = useState<Character>(() => {
-        const saved = localStorage.getItem("pomorpg_character");
-        return saved ? JSON.parse(saved) : createNewCharacter();
-    });
 
     const [lastRunSummary, setLastRunSummary] = useState<runResults | null>(null);
     const [bossResult, setBossResult] = useState<BossFightResult | null>(null);
@@ -93,32 +69,23 @@ function App() {
     const { isRunning, secondsLeft, start, pause, reset, formattedTime } = focusTimer;
     const breakTimer = useTimer(HARDCORE_BREAK_DURATION);
 
-    /* THEME APPLY + PERSIST */
+    /* THEME APPLY */
     useEffect(() => {
         document.documentElement.dataset.theme = theme; // <html data-theme="dark|light">
-        localStorage.setItem(THEME_KEY, theme);
     }, [theme]);
 
     /* PERSIST GAME STATE */
     useEffect(() => {
-        localStorage.setItem("pomorpg_character", JSON.stringify(character));
-    }, [character]);
-
-    useEffect(() => {
-        localStorage.setItem("pomorpg_xp", xp.toString());
-    }, [xp]);
-
-    useEffect(() => {
-        localStorage.setItem("pomorpg_unlocked_branches", JSON.stringify(unlockedBranches));
-    }, [unlockedBranches]);
-
-    useEffect(() => {
-        localStorage.setItem("pomorpg_unlocked_skills", JSON.stringify(unlockedSkills));
-    }, [unlockedSkills]);
-
-    useEffect(() => {
-        localStorage.setItem("pomorpg_hardcore", JSON.stringify(hardcoreEnabled));
-    }, [hardcoreEnabled]);
+        writeSave({
+            version: 1,
+            xp,
+            character,
+            unlockedBranches,
+            unlockedSkills,
+            hardcoreEnabled,
+            theme,
+        });
+    }, [xp, character, unlockedBranches, unlockedSkills, hardcoreEnabled, theme]);
 
     /* POMODORO COMPLETE */
     useEffect(() => {
@@ -247,6 +214,7 @@ function App() {
     const handleResetData = () => {
         if (!window.confirm("Are you SURE you want to reset all data? This will permanently delete all your progress."))
             return;
+        resetSave();
         resetPomoRpgStorage();
         window.location.reload();
     };
