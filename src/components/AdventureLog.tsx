@@ -11,6 +11,7 @@ export default function AdventureLog() {
     const visibleCount = expanded ? 10 : 1;
     const visibleEntries = entries.slice(0, visibleCount);
 
+    // todo: hover over log entry to show timestamp
     return (
         <div>
             <div className="adventure-log-header">
