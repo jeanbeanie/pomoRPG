@@ -39,8 +39,8 @@ const HARDCORE_BREAK_DURATION = 5 * 60; // 5 minutes in seconds
 const CLEAN_BONUS_XP = 10; // XP bonus for completing a pomodoro without pausing
 
 function App() {
-    // Load initial save data once on app start
-    const [initialSave] = useState(loadSave());
+    // lazy load save data on initial render, call loadSave() only once
+    const [initialSave] = useState(() => loadSave());
     /* STATE INIT */
     const [theme, setTheme] = useState<Theme>(initialSave.theme);
     const [hardcoreEnabled, setHardcoreEnabled] = useState<boolean>(initialSave.hardcoreEnabled);
