@@ -33,6 +33,9 @@ export type SaveDataV2 = {
     adventureLog: AdventureEntry[];
 }
 
+// avoid importing SaveDataVX everywhere later
+export type SaveData = SaveDataV2;
+
 const SAVE_KEY = "pomorpg_save";
 // legacy keys for migrating old data to new save structure
 const LEGACY_POMO_COUNTER_KEY = "pomorpg_pomo_counter";
@@ -70,6 +73,15 @@ function safeJsonParse<T>(raw: string | null, fallback: T): T {
     }
 }
 
+function safeJsonParseUnknown(raw: string | null): unknown {
+    if (!raw) return null;
+    try {
+        return JSON.parse(raw) as unknown;
+    } catch {
+        return null;
+    }
+}
+
 function readLegacyNumber(key: string): number {
     const raw = localStorage.getItem(key);
     // Try to parse as number, if it's not a valid number, return 0
@@ -77,8 +89,20 @@ function readLegacyNumber(key: string): number {
     // Ensure it's a valid finite number, otherwise return 0
     return Number.isFinite(n) ? n : 0;
 }
+function isObject(value: unknown): value is Record<string, unknown> {
+    return typeof value === "object" && value !== null;
+}
 
-function migrateToV2(parsed: any): SaveDataV2 {
+function isV1(value: unknown): value is SaveDataV1 {
+    return isObject(value) && value["version"] === 1;
+}
+
+// treat V2 as partial in case we have missing fields
+function isV2(value: unknown): value is Partial<SaveDataV2> & { version: 2 } {
+    return isObject(value) && value["version"] === 2;
+}
+
+function migrateToV2(parsed: unknown): SaveDataV2 {
     const base = defaultSaveV2();
 
     // Pull legacy data (if any). run this once, then we delete the keys.
@@ -100,13 +124,13 @@ function migrateToV2(parsed: any): SaveDataV2 {
     };
 
     // if v2 already (still ensure caps + legacy import if fields missing)
-    if (parsed && parsed.version === 2) {
+    if (isV2(parsed)) {
         const next: SaveDataV2 = {
             ...base,
             ...parsed,
             version: 2,
-            pomoCount:
-                typeof parsed.pomoCount === "number" ? parsed.pomoCount : legacyPomoCount,
+            pomoCounter:
+                typeof parsed.pomoCounter === "number" ? parsed.pomoCounter : legacyPomoCount,
             sessions: capTail(
                 Array.isArray(parsed.sessions) ? parsed.sessions : legacySessions,
                 MAX_SESSIONS
@@ -123,7 +147,7 @@ function migrateToV2(parsed: any): SaveDataV2 {
     }
 
     // v1 -> v2
-    if (parsed && parsed.version === 1) {
+    if (isV1(parsed)) {
         const next: SaveDataV2 = {
             ...base,
             ...parsed,
@@ -154,15 +178,10 @@ export function loadSave(): SaveDataV2 {
     const raw = localStorage.getItem(SAVE_KEY);
 
     
-    if (!raw) {
-        const next = migrateToV2(null);
-        localStorage.setItem(SAVE_KEY, JSON.stringify(next));
-        return next;
-    };
-
-    // Save exists: parse, migrate, re-save
-    const parsed = safeJsonParse<any>(raw, null);
+    const parsed = safeJsonParseUnknown(raw);
     const next = migrateToV2(parsed);
+
+    // persist any migrated/defaulted data back to storage to ensure it's in a consistent format for next time
     localStorage.setItem(SAVE_KEY, JSON.stringify(next));
     return next;
 }
