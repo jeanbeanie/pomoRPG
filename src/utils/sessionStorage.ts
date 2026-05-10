@@ -1,13 +1,13 @@
-import { type PomoSession } from '../types/session';
+// todo: this name is misleading, since it's not really session storage, it's more like local storage for sessions. 
+// maybe rename to pomoSessionStorage or something ?
 
-const STORAGE_KEY = 'pomorpg_sessions';
+import { type PomoSession } from '../types/session';
+import { loadSave, updateSave } from './storage';
 
 export function loadPomoSessions(): PomoSession[] {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    return saved ? JSON.parse(saved) : [];
+    return loadSave().sessions;
 }
 export function savePomoSession(session: PomoSession) {
-    const sessions = loadPomoSessions();
-    sessions.push(session);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
+    const current = loadSave().sessions;
+    updateSave({ sessions: [...current, session]});
 }

@@ -1,5 +1,5 @@
 // src/game/adventureLog.ts
-
+import { loadSave, updateSave } from "../utils/storage";
 const STORAGE_KEY = "pomorpg_adventure_log";
 
 export type AdventureEntry = {
@@ -42,13 +42,11 @@ export function generateBossEntry(project: string, bossName: string, victory: bo
 }
 
 export function loadAdventureLog(): AdventureEntry[] {
-    const rawSavedLog = localStorage.getItem(STORAGE_KEY);
-    if (!rawSavedLog) return [];
-    return JSON.parse(rawSavedLog)
+    return loadSave().adventureLog;
 };
 
 export function saveAdventureEntry(newEntry: AdventureEntry) {
-    const log = loadAdventureLog();
-    const updatedLog = [newEntry, ...log]
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedLog));
+    const current = loadSave().adventureLog;
+    // newest entries at the front
+    updateSave({ adventureLog: [newEntry, ...current] });
 }
