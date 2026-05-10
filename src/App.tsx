@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import type { ReactNode } from "react";
-import { loadSave, writeSave, resetSave, type Theme } from "./utils/storage";
+import { loadSave, updateSave, resetSave, type Theme } from "./utils/storage";
 
 /* UI component imports */
 import Button from "./components/Button";
@@ -76,8 +76,7 @@ function App() {
 
     /* PERSIST GAME STATE */
     useEffect(() => {
-        writeSave({
-            version: 1,
+        updateSave({
             xp,
             character,
             unlockedBranches,

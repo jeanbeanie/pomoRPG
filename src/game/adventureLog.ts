@@ -1,6 +1,5 @@
 // src/game/adventureLog.ts
 import { loadSave, updateSave } from "../utils/storage";
-const STORAGE_KEY = "pomorpg_adventure_log";
 
 export type AdventureEntry = {
     id: string;

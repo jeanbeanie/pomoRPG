@@ -14,7 +14,6 @@ export const bosses: Boss[] = [
     { name: "Flippety Flop", hp: 50, attack: 6 },
 ];
 
-const BOSS_COUNTER_KEY = "pomorpg_pomo_counter";
 const BOSS_FIGHT_INTERVAL = 4; // Every 4 pomodoros
 
 export function getBossProgress(total: number = BOSS_FIGHT_INTERVAL): number {
