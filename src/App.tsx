@@ -54,6 +54,7 @@ function App() {
     const [projectName, setProjectName] = useState("");
     const [isCleanRun, setIsCleanRun] = useState(true);
     const [breakLocked, setBreakLocked] = useState(false);
+    const [sessionJustEnded, setSessionJustEnded] = useState(false);
 
     const [lastRunSummary, setLastRunSummary] = useState<runResults | null>(null);
     const [bossResult, setBossResult] = useState<BossFightResult | null>(null);
@@ -127,6 +128,7 @@ function App() {
 
         setUpgradeOptions(generateUpgradeOptions());
         setMode("break");
+        setSessionJustEnded(true);
 
         if (hardcoreEnabled) {
             setBreakLocked(true);
@@ -145,6 +147,43 @@ function App() {
         isCleanRun,
         breakTimer,
     ]);
+    
+  // When focus session ends, flash document title
+  // stop once user returns to tab
+  useEffect(() => {
+    if (!sessionJustEnded) return;
+
+    // reset flah immediately so this effect doesnt fire again
+    // until the next focus session completion sets it to true
+    setSessionJustEnded(false);
+
+    const originalTitle = document.title;
+    let flashOn = false;
+
+    // toggle tab title every 800ms to create flashing effect
+    const flashInterval = setInterval(() => {
+        document.title = flashOn ? "⏰ Time's up!" : originalTitle;
+        flashOn = !flashOn;
+    }, 800);
+
+    function stopFlash() {
+        if (document.visibilityState === "visible") {
+            clearInterval(flashInterval);
+            document.title = originalTitle;
+            document.removeEventListener("visibilitychange", stopFlash);
+        }
+    }
+    // once user returns to tab, stop flashing
+    document.addEventListener("visibilitychange", stopFlash);
+
+    // cleanup, ensure flash stops and original title restored
+    // if component unmounts or effect re-runs
+    return () => {
+        clearInterval(flashInterval);
+        document.title = originalTitle;
+        document.removeEventListener("visibilitychange", stopFlash);
+    };
+}, [secondsLeft, isRunning, sessionJustEnded]);
 
     function applyUpgrade(option: UpgradeOption) {
         if (option.type === "attack") {
