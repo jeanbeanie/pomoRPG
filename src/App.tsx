@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import type { ReactNode } from "react";
 import { loadSave, updateSave, resetSave, type Theme } from "./utils/storage";
+import { unlockAudio, playChime, requestNotificationPermission, notifySessionEnd } from "./utils/alerts";
 
 /* UI component imports */
 import Button from "./components/Button";
@@ -44,6 +45,7 @@ function App() {
     /* STATE INIT */
     const [theme, setTheme] = useState<Theme>(initialSave.theme);
     const [hardcoreEnabled, setHardcoreEnabled] = useState<boolean>(initialSave.hardcoreEnabled);
+    const [notificationsEnabled, setNotificationsEnabled] = useState<boolean>(initialSave.notificationsEnabled);
     const [xp, setXp] = useState(initialSave.xp);
     const [unlockedBranches, setUnlockedBranches] = useState<SkillBranch[]>(initialSave.unlockedBranches);
     const [unlockedSkills, setUnlockedSkills] = useState<string[]>(initialSave.unlockedSkills);
@@ -84,8 +86,9 @@ function App() {
             unlockedSkills,
             hardcoreEnabled,
             theme,
+            notificationsEnabled,
         });
-    }, [xp, character, unlockedBranches, unlockedSkills, hardcoreEnabled, theme]);
+    }, [xp, character, unlockedBranches, unlockedSkills, hardcoreEnabled, theme, notificationsEnabled]);
 
     /* POMODORO COMPLETE */
     useEffect(() => {
@@ -130,6 +133,11 @@ function App() {
         setMode("break");
         setSessionJustEnded(true);
 
+        if (notificationsEnabled) {
+            playChime();
+            notifySessionEnd(`+${reward} XP earned. Your adventurer is waiting.`);
+        }
+
         if (hardcoreEnabled) {
             setBreakLocked(true);
             breakTimer.reset();
@@ -146,6 +154,7 @@ function App() {
         hardcoreEnabled,
         isCleanRun,
         breakTimer,
+        notificationsEnabled,
     ]);
     
   // When focus session ends, flash document title
@@ -289,6 +298,7 @@ function App() {
                         <div style={{ marginTop: 10 }}>
                             <Button
                                 onClick={() => {
+                                    if (notificationsEnabled) unlockAudio();
                                     setIsCleanRun(true);
                                     setMode("focus");
                                     reset();
@@ -316,6 +326,22 @@ function App() {
                                     onChange={(e) => setTheme(e.target.checked ? "dark" : "light")}
                                 />
                                 Dark mode
+                            </label>
+
+                            <label>
+                                <input
+                                    type="checkbox"
+                                    checked={notificationsEnabled}
+                                    onChange={(e) => {
+                                        const checked = e.target.checked;
+                                        setNotificationsEnabled(checked);
+                                        if (checked) {
+                                            unlockAudio();
+                                            void requestNotificationPermission();
+                                        }
+                                    }}
+                                />
+                                🔔 Alerts when session ends
                             </label>
                         </div>
                     </div>

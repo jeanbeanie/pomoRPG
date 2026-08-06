@@ -25,6 +25,7 @@ export type SaveDataV2 = {
     unlockedSkills: string[]; // skill ids
     hardcoreEnabled: boolean;
     theme: Theme;
+    notificationsEnabled: boolean;
 
     // boss pacing
     pomoCounter: number;
@@ -59,6 +60,7 @@ const defaultSaveV2 = (): SaveDataV2 => ({
     unlockedSkills: [],
     hardcoreEnabled: false,
     theme: "dark",
+    notificationsEnabled: false,
     pomoCounter: 0,
     sessions: [],
     adventureLog: [],
