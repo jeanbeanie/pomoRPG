@@ -132,39 +132,6 @@ input[type="text"]:focus {
     margin: 20px 0;
 }
 
-/* XP BAR */
-.xp-bar-container {
-    width: 300px;
-    height: 25px;
-    background: var(--panel);
-    border: 1px solid var(--border);
-    margin: 10px auto;
-    border-radius: 10px;
-    overflow: hidden;
-    position: relative;
-}
-
-.xp-bar-fill-area {
-    height: 100%;
-    background-color: var(--accent-2);
-    transition: width 0.3s ease;
-}
-
-.xp-bar-text-area {
-    position: absolute;
-    width: 300px;
-    height: 25px;
-    top: 50%;
-    left: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.8rem;
-    font-weight: bold;
-    color: var(--text);
-    transform: translate(-50%, -50%);
-}
-
 /* Boss meter */
 .boss-meter {
     font-size: 2rem;
