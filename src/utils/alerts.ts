@@ -61,7 +61,7 @@ export function notifySessionEnd(body: string): void {
 
     const notification = new Notification("⏰ Session complete!", {
         body,
-        icon: "/pwa-192.png",
+        icon: "/pomoRPG/pwa-192.png",
         tag: "pomorpg-session-end",
     });
 
