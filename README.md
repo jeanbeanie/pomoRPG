@@ -51,6 +51,9 @@ Essential features and the basic skill tree system are functional. The core loop
 - [ ] Full hardcore mode implementation
 - [ ] Clean run achievement system with tiered rewards
 - [ ] Visual polish: animations and sound effects
+- [ ] Skill tree overhaul (make unlocked skills actually affect gameplay)
+- [ ] Automated tests and a lint step in CI
+- [ ] Break up App.tsx into smaller screen components
 
 ---
 
