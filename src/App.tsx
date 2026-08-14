@@ -28,7 +28,7 @@ import {
     getBossProgress,
 } from "./game/bosses";
 import { generateUpgradeOptions, type UpgradeOption } from "./game/upgrades";
-import { generateAdventureEntry, saveAdventureEntry } from "./game/adventureLog";
+import { generateAdventureEntry, generateBossEntry, saveAdventureEntry } from "./game/adventureLog";
 import { savePomoSession } from "./utils/sessionStorage";
 
 /* Styles */
@@ -124,7 +124,9 @@ function App() {
 
         const count = incrementPomoCounter();
         if (count % 4 === 0) {
-            setBossResult(simulateBossFight(character));
+            const result = simulateBossFight(character);
+            setBossResult(result);
+            saveAdventureEntry(generateBossEntry(projectName, result.boss.name, result.victory));
         } else {
             setBossResult(null);
         }
