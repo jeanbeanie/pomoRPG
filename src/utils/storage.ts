@@ -84,6 +84,14 @@ function safeJsonParseUnknown(raw: string | null): unknown {
     }
 }
 
+function trySetItem(key: string, value: string): void {
+    try {
+        localStorage.setItem(key, value);
+    } catch (err) {
+        console.error("pomoRPG: failed to write save to localStorage", err);
+    }
+}
+
 function readLegacyNumber(key: string): number {
     const raw = localStorage.getItem(key);
     // Try to parse as number, if it's not a valid number, return 0
@@ -184,7 +192,7 @@ export function loadSave(): SaveDataV2 {
     const next = migrateToV2(parsed);
 
     // persist any migrated/defaulted data back to storage to ensure it's in a consistent format for next time
-    localStorage.setItem(SAVE_KEY, JSON.stringify(next));
+    trySetItem(SAVE_KEY, JSON.stringify(next));
     return next;
 }
 
@@ -197,7 +205,7 @@ export function writeSave(save: SaveDataV2) {
         adventureLog: capHead(save.adventureLog ?? [], MAX_ADVENTURE_LOG),
     };
 
-    localStorage.setItem(SAVE_KEY, JSON.stringify(next));
+    trySetItem(SAVE_KEY, JSON.stringify(next));
 }
 
 export function updateSave(patch: Partial<SaveDataV2>): SaveDataV2 {
