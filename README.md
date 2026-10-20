@@ -55,6 +55,17 @@ Essential features and the basic skill tree system are functional. The core loop
 - [ ] Automated tests and a lint step in CI
 - [ ] Break up App.tsx into smaller screen components
 
+## Known Issues
+
+- [ ] Tab title flash on session end likely stops almost immediately
+- [ ] `accountXpBoost` upgrade has no effect
+- [ ] Skipping the upgrade choice applies the attack upgrade automatically
+- [ ] Gold is earned but never saved or spent
+- [ ] Boss fights give no rewards (the Features list claims bonus XP)
+- [ ] Normal breaks have no break timer, only hardcore breaks do
+- [ ] `loadSave` writes to localStorage on every read, and `getBossProgress` calls it on every render
+- [ ] Reset Data clears storage twice (`resetSave` and `resetPomoRpgStorage` overlap)
+
 ---
 
 **Remember:** Every pomodoro cycle completed is a win.
