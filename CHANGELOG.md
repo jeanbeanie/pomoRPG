@@ -6,6 +6,8 @@
 - Document title now flashes when a session ends and the tab isn't focused
 ### Fixed
 - GitHub Pages deploy workflow could get stuck queued indefinitely; added a configure-pages step
+### Removed
+- Skill tree and skill points, pending a rebuild
 
 ## v0.6.0 - May 10, 2026
 ### Added

@@ -1,5 +1,4 @@
 import { createNewCharacter, type Character } from '../game/character';
-import type { SkillBranch } from '../data/skills';
 import type { PomoSession } from '../types/session';
 import type { AdventureEntry } from '../game/adventureLog';
 
@@ -9,7 +8,7 @@ export type SaveDataV1 = {
     version: 1;
     xp: number;
     character: Character;
-    unlockedBranches: SkillBranch[];
+    unlockedBranches: string[]; // branch ids
     unlockedSkills: string[]; // skill ids
     hardcoreEnabled: boolean;
     theme: Theme;
@@ -21,7 +20,7 @@ export type SaveDataV2 = {
     // core game data
     xp: number;
     character: Character;
-    unlockedBranches: SkillBranch[];
+    unlockedBranches: string[]; // branch ids
     unlockedSkills: string[]; // skill ids
     hardcoreEnabled: boolean;
     theme: Theme;

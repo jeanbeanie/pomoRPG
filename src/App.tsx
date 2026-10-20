@@ -12,11 +12,9 @@ import TimerControls from "./components/TimerControls";
 import BreakSummary from "./components/BreakSummary";
 import AdventureLog from "./components/AdventureLog";
 import BossMeter from "./components/BossMeter";
-import SkillTree from "./components/SkillTree";
 
 /* Game logic imports */
 import { useTimer } from "./hooks/useTimer";
-import { type SkillBranch, BRANCH_UNLOCK_COST, skills } from "./data/skills";
 import { getDailyStreak, getBestDailyStreak } from "./game/streaks";
 import { getXpReward } from "./game/gameLogic";
 import { applyCharacterXp, type Character } from "./game/character";
@@ -47,8 +45,6 @@ function App() {
     const [hardcoreEnabled, setHardcoreEnabled] = useState<boolean>(initialSave.hardcoreEnabled);
     const [notificationsEnabled, setNotificationsEnabled] = useState<boolean>(initialSave.notificationsEnabled);
     const [xp, setXp] = useState(initialSave.xp);
-    const [unlockedBranches, setUnlockedBranches] = useState<SkillBranch[]>(initialSave.unlockedBranches);
-    const [unlockedSkills, setUnlockedSkills] = useState<string[]>(initialSave.unlockedSkills);
     const [character, setCharacter] = useState<Character>(initialSave.character);
 
     const [mode, setMode] = useState<"home" | "focus" | "break">("home");
@@ -82,19 +78,17 @@ function App() {
         updateSave({
             xp,
             character,
-            unlockedBranches,
-            unlockedSkills,
             hardcoreEnabled,
             theme,
             notificationsEnabled,
         });
-    }, [xp, character, unlockedBranches, unlockedSkills, hardcoreEnabled, theme, notificationsEnabled]);
+    }, [xp, character, hardcoreEnabled, theme, notificationsEnabled]);
 
     /* POMODORO COMPLETE */
     useEffect(() => {
         if (!(secondsLeft === 0 && !isRunning && mode === "focus")) return;
 
-        // calculate XP reward based on unlocked skills and whether it was a clean run (hardcore)
+        // XP reward plus clean run bonus in hardcore
         const baseXp = getXpReward();
         const cleanBonusXp = hardcoreEnabled && isCleanRun ? CLEAN_BONUS_XP : 0;
         const reward = baseXp + cleanBonusXp;
@@ -238,18 +232,6 @@ function App() {
         }
     }, [hardcoreEnabled, mode, breakTimer.secondsLeft, breakTimer.isRunning, finalizeBreakAndAdvance]);
 
-    /* SKILL LOGIC */
-    const totalSkillPointsEarned = Math.floor(xp / 100);
-    const spSpentOnBranches =
-        unlockedBranches.length <= 1 ? 0 : (unlockedBranches.length - 1) * BRANCH_UNLOCK_COST;
-
-    const spentOnSkills = unlockedSkills.reduce((sum, skillId) => {
-        const skill = skills.find((s) => s.id === skillId);
-        return sum + (skill ? skill.cost : 0);
-    }, 0);
-
-    const skillPointsAvailable = totalSkillPointsEarned - spSpentOnBranches - spentOnSkills;
-
     /* RESET */
     function resetPomoRpgStorage() {
         const keysToRemove: string[] = [];
@@ -286,7 +268,6 @@ function App() {
                         <span className="stats-pill">🔥 {streak} day streak</span>
                         <span className="stats-pill">🏆 Best: {bestStreak}</span>
                         <span className="stats-pill">XP: {xp}</span>
-                        <span className="stats-pill">SP: {skillPointsAvailable}</span>
                     </div>
 
                     <div className="section">
@@ -359,36 +340,6 @@ function App() {
 
                     <div className="section">
                         <AdventureLog />
-                    </div>
-
-                    <div className="section">
-                        <SkillTree
-                            skillPoints={skillPointsAvailable}
-                            unlockedBranches={unlockedBranches}
-                            unlockedSkillIds={unlockedSkills}
-                            onUnlockBranch={(branch) => {
-                                if (unlockedBranches.includes(branch)) return;
-                                const isFirstBranch = unlockedBranches.length === 0;
-                                const cost = isFirstBranch ? 0 : BRANCH_UNLOCK_COST;
-                                if (skillPointsAvailable < cost) return;
-                                setUnlockedBranches((prev) => [...prev, branch]);
-                            }}
-                            onUnlockSkill={(skillId) => {
-                                if (unlockedSkills.includes(skillId)) return;
-
-                                const skill = skills.find((s) => s.id === skillId);
-                                if (!skill) return;
-
-                                if (!unlockedBranches.includes(skill.branch)) return;
-
-                                const prerequisitesMet = (skill.requires ?? []).every((req) => unlockedSkills.includes(req));
-                                if (!prerequisitesMet) return;
-
-                                if (skillPointsAvailable < skill.cost) return;
-
-                                setUnlockedSkills((prev) => [...prev, skillId]);
-                            }}
-                        />
                     </div>
                 </div>
             );
