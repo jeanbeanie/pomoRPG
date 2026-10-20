@@ -33,8 +33,25 @@ export type SaveDataV2 = {
     adventureLog: AdventureEntry[];
 }
 
+export type SaveDataV3 = {
+    version: 3;
+
+    // core game data
+    xp: number;
+    character: Character;
+    hardcoreEnabled: boolean;
+    theme: Theme;
+    notificationsEnabled: boolean;
+
+    // boss pacing
+    pomoCounter: number;
+    // history/logs (capped to last 200)
+    sessions: PomoSession[];
+    adventureLog: AdventureEntry[];
+}
+
 // avoid importing SaveDataVX everywhere later
-export type SaveData = SaveDataV2;
+export type SaveData = SaveDataV3;
 
 const SAVE_KEY = "pomorpg_save";
 // legacy keys for migrating old data to new save structure
@@ -51,18 +68,23 @@ const capTail = <T,>(arr: T[], max: number) =>
 const capHead = <T,>(arr: T[], max: number) => 
     arr.length > max ? arr.slice(0, max) : arr;
 
-const defaultSaveV2 = (): SaveDataV2 => ({
-    version: 2,
+const defaultSaveV3 = (): SaveDataV3 => ({
+    version: 3,
     xp: 0,
     character: createNewCharacter(),
-    unlockedBranches: [],
-    unlockedSkills: [],
     hardcoreEnabled: false,
     theme: "dark",
     notificationsEnabled: false,
     pomoCounter: 0,
     sessions: [],
     adventureLog: [],
+});
+
+const defaultSaveV2 = (): SaveDataV2 => ({
+    ...defaultSaveV3(),
+    version: 2,
+    unlockedBranches: [],
+    unlockedSkills: [],
 });
 
 function safeJsonParse<T>(raw: string | null, fallback: T): T {
@@ -109,6 +131,10 @@ function isV1(value: unknown): value is SaveDataV1 {
 // treat V2 as partial in case we have missing fields
 function isV2(value: unknown): value is Partial<SaveDataV2> & { version: 2 } {
     return isObject(value) && value["version"] === 2;
+}
+
+function isV3(value: unknown): value is Partial<SaveDataV3> & { version: 3 } {
+    return isObject(value) && value["version"] === 3;
 }
 
 function migrateToV2(parsed: unknown): SaveDataV2 {
@@ -182,24 +208,54 @@ function migrateToV2(parsed: unknown): SaveDataV2 {
     return next;
 }
 
+// explicit picks drop v2 only fields (unlockedBranches, unlockedSkills)
+function v2ToV3(save: SaveDataV2): SaveDataV3 {
+    return {
+        version: 3,
+        xp: save.xp,
+        character: save.character,
+        hardcoreEnabled: save.hardcoreEnabled,
+        theme: save.theme,
+        notificationsEnabled: save.notificationsEnabled,
+        pomoCounter: save.pomoCounter,
+        sessions: save.sessions,
+        adventureLog: save.adventureLog,
+    };
+}
 
-export function loadSave(): SaveDataV2 {
+function migrateToV3(parsed: unknown): SaveDataV3 {
+    if (isV3(parsed)) {
+        return {
+            ...defaultSaveV3(),
+            ...parsed,
+            version: 3,
+            sessions: capTail(Array.isArray(parsed.sessions) ? parsed.sessions : [], MAX_SESSIONS),
+            adventureLog: capHead(Array.isArray(parsed.adventureLog) ? parsed.adventureLog : [], MAX_ADVENTURE_LOG),
+        };
+    }
+
+    // older or missing saves go through v2 first for legacy key import
+    return v2ToV3(migrateToV2(parsed));
+}
+
+
+export function loadSave(): SaveDataV3 {
     const raw = localStorage.getItem(SAVE_KEY);
 
     
     const parsed = safeJsonParseUnknown(raw);
-    const next = migrateToV2(parsed);
+    const next = migrateToV3(parsed);
 
     // persist any migrated/defaulted data back to storage to ensure it's in a consistent format for next time
     trySetItem(SAVE_KEY, JSON.stringify(next));
     return next;
 }
 
-export function writeSave(save: SaveDataV2) {
+export function writeSave(save: SaveDataV3) {
     // enforce caps on sessions and adventure log
-    const next: SaveDataV2 = {
+    const next: SaveDataV3 = {
         ...save,
-        version: 2,
+        version: 3,
         sessions: capTail(save.sessions ?? [], MAX_SESSIONS),
         adventureLog: capHead(save.adventureLog ?? [], MAX_ADVENTURE_LOG),
     };
@@ -207,9 +263,9 @@ export function writeSave(save: SaveDataV2) {
     trySetItem(SAVE_KEY, JSON.stringify(next));
 }
 
-export function updateSave(patch: Partial<SaveDataV2>): SaveDataV2 {
+export function updateSave(patch: Partial<SaveDataV3>): SaveDataV3 {
     const current = loadSave();
-    const merged: SaveDataV2 = { ...current, ...patch, version: 2 };
+    const merged: SaveDataV3 = { ...current, ...patch, version: 3 };
     writeSave(merged);
     return merged;
 }
